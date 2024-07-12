@@ -12,6 +12,8 @@ passlib = {extras = ["bcrypt"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
 requests = "*"
 python-dotenv = "*"
+sqlalchemy = "*"
+pymysql = "*"
 
 [dev-packages]
 fastapi = "*"
