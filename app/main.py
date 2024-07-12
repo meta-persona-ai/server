@@ -3,9 +3,11 @@ from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 import os
 
+
 from .swagger_info import description, tags_metadata
-from .api import auth_router, user_router
-from .db.database import create_database, create_schema, create_tables
+from .routers import user_router
+from .database import create_database, create_schema, drop_tables, create_tables
+from .domain.auth import auth_router
 
 
 
@@ -13,6 +15,7 @@ from .db.database import create_database, create_schema, create_tables
 async def lifespan(app: FastAPI):
     create_database()
     create_schema()
+    drop_tables()
     create_tables()
     yield
 
@@ -35,7 +38,7 @@ async def serve_homepage():
 
 # Including API routers
 app.include_router(auth_router.router, prefix="/api/auth", tags=["auth"])
-app.include_router(user_router.router, prefix="/api/crud", tags=["user"])
+# app.include_router(user_router.router, prefix="/api/crud", tags=["user"])
 
 
 if __name__ == "__main__":
