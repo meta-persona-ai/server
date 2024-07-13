@@ -4,10 +4,10 @@ from contextlib import asynccontextmanager
 import os
 
 
-from .swagger_info import description, tags_metadata
-from .routers import user_router
-from .database import create_database, create_schema, drop_tables, create_tables
-from .domain.auth import auth_router
+from swagger_info import description, tags_metadata
+from routers import user_router
+from database import create_database, create_schema, drop_tables, create_tables
+from domain.auth import auth_router
 
 
 

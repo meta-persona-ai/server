@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import jwt
 
-from ...database import get_db
+from database import get_db
 from . import auth_service
 
 router = APIRouter()

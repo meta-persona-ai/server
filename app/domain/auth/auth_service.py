@@ -5,7 +5,7 @@ import requests
 import jwt
 import os
 
-from ...core.logger_config import setup_logger
+from core.logger_config import setup_logger
 from . import auth_crud, auth_schema
 
 

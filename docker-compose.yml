@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: persona
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  web:
+    build:
+      context: ./app
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - /.env  # .env 파일을 여기에 참조
+    environment:
+      DATABASE_URL: mysql+pymysql://root:example@db:3306/persona?charset=utf8
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+
+volumes:
+  mysql_data:

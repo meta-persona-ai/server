@@ -5,37 +5,32 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-DB_USER = os.getenv('MYSQL_USER')
-DB_PASSWORD = os.getenv('MYSQL_PASSWORD')
-DB_HOST = os.getenv('MYSQL_HOST')
-DB_PORT = os.getenv('MYSQL_PORT')
-DATABASE = os.getenv('MYSQL_DATABASE')
 
-DB_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/"
-SCHEMA_NAME = os.getenv('MYSQL_DATABASE')
-DATABASE_NAME = os.getenv('MYSQL_DATABASE')
+DATABASE_URL = os.getenv('DATABASE_URL')
+db_name = DATABASE_URL.split('/')[-1].split('?')[0]
 
-engine = create_engine(DB_URL)
+base_db_url = DATABASE_URL.rsplit('/', 1)[0]
+
+engine = create_engine(base_db_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def create_database():
     with engine.connect() as connection:
-        connection.execute(text(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}"))
+        connection.execute(text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
 
 def create_schema():
     global engine
-    engine = create_engine(f"{DB_URL}{DATABASE_NAME}?charset-utf8")
+    engine = create_engine(DATABASE_URL)
     SessionLocal.configure(bind=engine)
     with engine.connect() as connection:
-        connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA_NAME}"))
+        connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {db_name}"))
 
 def drop_tables():
     Base.metadata.drop_all(bind=engine)
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
-
 
 # Dependency
 def get_db():
