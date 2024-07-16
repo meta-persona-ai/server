@@ -1,3 +1,7 @@
+title="Persona AI"
+
+version="0.0.1"
+
 description = """
 #### 페르소나 AI
 
@@ -13,7 +17,7 @@ tags_metadata = [
         "description": "로그인과 권한 관련 API입니다.",
     },
     {
-        "name": "user",
+        "name": "User",
         "description": ""
     },
 ]

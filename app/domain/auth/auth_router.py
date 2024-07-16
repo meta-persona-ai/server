@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import jwt
 
 from database import get_db
-from schemas.request_schemas import auth_request_schema
+from schemas.auth import auth_request_schema
 from . import auth_service
 
 router = APIRouter(

@@ -5,8 +5,9 @@ import requests
 import jwt
 import os
 
+from schemas import auth_schema
 from core.logger_config import setup_logger
-from . import auth_crud, auth_schema
+from . import auth_crud
 
 
 logger = setup_logger()
@@ -37,7 +38,7 @@ def auth_google(code: str, db: Session) -> str:
     access_token = token_response.get("access_token")
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     user_info_response = user_info.json()
-
+    
     user_data = {
         "email": user_info_response.get("email"),
         "name": user_info_response.get("name"),
