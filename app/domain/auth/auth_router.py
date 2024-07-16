@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import jwt
 
 from database import get_db
-from schemas.request_schemas import auth_request_schema
+from schemas.auth import auth_request_schema
 from . import auth_service
 
 router = APIRouter(
@@ -56,7 +56,7 @@ async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Sessio
             description="구글 로그인시 발급되는 access-token를 사용합니다."
             )
 async def auth_google_token(data: auth_request_schema.LoginGoogleToken, db: Session = Depends(get_db)):
-    jwt_token = auth_service.auth_google(data.token, db)
+    jwt_token = auth_service.auth_google_access_token(data.token, db)
     return {
         "jwt_token": jwt_token,
     }

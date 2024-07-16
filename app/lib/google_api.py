@@ -1,0 +1,44 @@
+from dotenv import load_dotenv
+import requests
+import os
+
+from schemas.auth_schema import UserCreate
+
+load_dotenv()
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
+
+
+def get_google_login_url() -> str:
+    return f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
+
+def get_google_token(code: str) -> str:
+    token_url = "https://accounts.google.com/o/oauth2/token"
+    data = {
+        "code": code,
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "grant_type": "authorization_code",
+    }
+    response = requests.post(token_url, data=data)
+    token_response = response.json()
+    access_token = token_response.get("access_token")
+
+    return access_token
+
+def get_google_user_data(access_token: str) -> UserCreate:
+    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+    user_info_response = user_info.json()
+    
+    user_data = {
+        "email": user_info_response.get("email"),
+        "name": user_info_response.get("name"),
+        "picture": user_info_response.get("picture"),
+        "is_active": True,
+        "hashed_password": None
+    }
+
+    user = UserCreate(**user_data)
+    return user
