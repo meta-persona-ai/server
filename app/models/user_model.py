@@ -7,7 +7,7 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = {'schema': 'persona'}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), unique=True)
     hashed_password = Column(String(255))
     name = Column(String(255))

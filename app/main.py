@@ -37,7 +37,7 @@ async def serve_homepage():
 
 
 # Including API routers
-app.include_router(auth_router.router, prefix="/api/auth", tags=["auth"])
+app.include_router(auth_router.router)
 # app.include_router(user_router.router, prefix="/api/crud", tags=["user"])
 
 
