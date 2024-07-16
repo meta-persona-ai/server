@@ -1,44 +1,34 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
-import os
 
-
-from swagger_info import description, tags_metadata
-from routers import user_router
+from core import swagger_config
 from database import create_database, create_schema, drop_tables, create_tables
 from domain.auth import auth_router
-
+from domain.user import user_router
+from domain.etc import etc_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_database()
     create_schema()
-    drop_tables()
+    # drop_tables()
     create_tables()
     yield
 
 app = FastAPI(
-    title="Persona AI",
-    description=description,
-    version="0.0.1",
-    openapi_tags=tags_metadata,
+    title=swagger_config.title,
+    description=swagger_config.description,
+    version=swagger_config.version,
+    openapi_tags=swagger_config.tags_metadata,
     lifespan=lifespan
     )
 
 
-@app.get("/", response_class=HTMLResponse)
-async def serve_homepage():
-    file_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
-    with open(file_path, "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
-
-
 # Including API routers
 app.include_router(auth_router.router)
-# app.include_router(user_router.router, prefix="/api/crud", tags=["user"])
+app.include_router(user_router.router)
+app.include_router(etc_router.router)
 
 
 if __name__ == "__main__":
