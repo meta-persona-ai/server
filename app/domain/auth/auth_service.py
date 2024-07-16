@@ -58,6 +58,30 @@ def auth_google(code: str, db: Session) -> str:
 
     return jwt_token
 
+def auth_google_access_token(access_token: str, db: Session) -> str:
+    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+    user_info_response = user_info.json()
+
+    user_data = {
+        "email": user_info_response.get("email"),
+        "name": user_info_response.get("name"),
+        "picture": user_info_response.get("picture"),
+        "is_active": True,
+        "hashed_password": None
+    }
+    
+    user = auth_schema.UserCreate(**user_data)
+    auth_crud.create_user(db, user)
+    
+    jwt_token = jwt.encode({
+        "sub": user_info_response["id"],
+        "name": user_info_response["name"],
+        "email": user_info_response["email"],
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1)
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+    return jwt_token
+
 def decode_token(token: str):
     payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
     logger.info(f"📌 token - {payload}")

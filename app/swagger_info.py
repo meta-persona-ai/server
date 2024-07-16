@@ -9,8 +9,8 @@ description = """
 
 tags_metadata = [
     {
-        "name": "auth",
-        "description": ""
+        "name": "Auth",
+        "description": "로그인과 권한 관련 API입니다.",
     },
     {
         "name": "user",
