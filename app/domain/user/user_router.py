@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-import jwt
 
 from database import get_db
-from schemas.user import user_response_schema
+from schemas.user.user_response_schema import User
 from . import user_service
+
 
 router = APIRouter(
     prefix="/api/user",
@@ -13,11 +12,36 @@ router = APIRouter(
 )
 
 
-@router.get("/get-all-users",
-            response_model=list[user_response_schema.User]
+@router.get("/all",
+            description="모든 유저를 조회합니다.",
+            response_model=list[User]
             )
-async def get_all_users(db: Session = Depends(get_db)):
-    return user_service.get_all_users(db)
+async def read_users(db: Session = Depends(get_db)):
+    return user_service.get_users(db)
+
+@router.get("/id/{user_id}",
+            description="유저 ID로 유저를 조회합니다.",
+            response_model=User
+            )
+async def read_users_by_id(user_id: int, db: Session = Depends(get_db)):
+    return user_service.get_user_by_id(user_id, db)
+
+@router.get("/email/{user_email}",
+            description="유저 이메일로 유저를 조회합니다.",
+            response_model=User
+            )
+async def read_users_by_id(user_email: str, db: Session = Depends(get_db)):
+    return user_service.get_user_by_email(user_email, db)
+
+@router.delete("/users/{user_id}",
+               description="유저 ID로 유저를 삭제합니다.",
+               response_model=dict
+               )
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    success = user_service.delete_user_by_id(user_id, db)
+    if not success:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
 
 # @router.post("/users/", response_model=user_response_schema.User)
 # def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):

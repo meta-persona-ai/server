@@ -1,15 +1,24 @@
 from sqlalchemy.orm import Session
 
-from models import user_model
+from models.user_model import User
 
 
-def get_all_users(db: Session):
-    return db.query(user_model.User).all()
+def get_all_users(db: Session) -> list[User]:
+    return db.query(User).all()
 
+def get_user_by_id(user_id: int, db: Session) -> User:
+    return db.query(User).filter(User.id == user_id).first()
 
-# def get_user(db: Session, user_id: int):
-#     return db.query(user.User).filter(models.User.id == user_id).first()
+def get_user_by_email(email: str, db: Session) -> User:
+    return db.query(User).filter(User.email == email).first()
 
+def delete_user_by_id(user_id: int, db: Session) -> bool:
+    user_to_delete = db.query(User).filter(User.id == user_id).first()
+    if user_to_delete:
+        db.delete(user_to_delete)
+        db.commit()
+        return True
+    return False
 
 # def get_user_by_email(db: Session, email: str):
 #     return db.query(user_model.User).filter(user_model.User.email == email).first()

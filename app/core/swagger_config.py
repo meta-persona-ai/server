@@ -18,6 +18,6 @@ tags_metadata = [
     },
     {
         "name": "User",
-        "description": ""
+        "description": "유저 관련 API입니다."
     },
 ]

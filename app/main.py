@@ -12,7 +12,7 @@ from domain.etc import etc_router
 async def lifespan(app: FastAPI):
     create_database()
     create_schema()
-    drop_tables()
+    # drop_tables()
     create_tables()
     yield
 
