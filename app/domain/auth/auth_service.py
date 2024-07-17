@@ -30,12 +30,19 @@ def auth_google(code: str, db: Session):
 def auth_google_access_token(access_token: str, db: Session):
     user_data = get_google_user_data(access_token)
 
+    logger.info(f"📌 get user data to google - {user_data}")
+
     existing_user = user_service.get_user_by_email(user_data.email, db)
     
+
     if existing_user:
         db_user = existing_user
     else:
         db_user = auth_crud.create_user(db, user_data)
+
+        logger.info(f"📌 successfully make user - {db_user}")
+
+    logger.info(f"📌 login complete!")
 
     return make_access_token(db_user)
 

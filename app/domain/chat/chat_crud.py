@@ -1,19 +1,18 @@
 from sqlalchemy.orm import Session
 
 from ...models.chat import Chat
-from ...schemas.user.user_request_schema import UserUpdate
+from ...schemas.chat_schema import ChatCreate
 
 
-# def create_chat(db: Session, chat: ChatCreate):
-#     db_chat = Chat(
-#         user_id=chat.user_id,
-#         character_id=chat.character_id,
-#         chat_create_at=chat.chat_create_at or datetime.now()
-#     )
-#     db.add(db_chat)
-#     db.commit()
-#     db.refresh(db_chat)
-#     return db_chat
+def create_chat(chat: ChatCreate, db: Session):
+    db_chat = Chat(
+        user_id=chat.user_id,
+        character_id=chat.character_id,
+    )
+    db.add(db_chat)
+    db.commit()
+    db.refresh(db_chat)
+    return db_chat
 
 # # select
 # def get_all_users(db: Session) -> list[User]:

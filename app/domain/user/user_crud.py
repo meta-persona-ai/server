@@ -35,10 +35,10 @@ def delete_user_by_id(user_id: int, db: Session) -> bool:
     return False
 
 # deactivate
-def deactivate_user_by_id(user_id: int, db: Session) -> bool:
+def deactivate_user_by_id(user_id: int, db: Session):
     user_to_deactivate = db.query(User).filter(User.user_id == user_id).first()
     if user_to_deactivate:
-        user_to_deactivate.is_active = False
+        user_to_deactivate.user_is_active = False
         db.commit()
         return user_to_deactivate
     return None

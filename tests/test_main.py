@@ -55,7 +55,7 @@ def test_read_user(db_session: Session):
 
 
 def test_read_user_by_id(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.get(f"/api/user/{user_id}")
     assert response.status_code == 200
     data = response.json()
@@ -66,22 +66,22 @@ def test_read_user_by_email(db_session: Session):
     response = client.get("/api/user/email/test@example.com")
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "test@example.com"
+    assert data["user_email"] == "test@example.com"
 
 def test_update_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.put(
         f"/api/user/{user_id}",
-        json={"name": "Updated User"}
+        json={"user_name": "Updated User"}
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["name"] == "Updated User"
+    assert data["user_name"] == "Updated User"
 
 
 def test_deactivate_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.put(f"/api/user/deactivate/{user_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["is_active"] == False
+    assert data["user_is_active"] == False

@@ -5,7 +5,7 @@ class User(BaseModel):
     user_email: str
     user_name: str
     user_profile: str | None = None
-    is_active: bool = True
+    user_is_active: bool = True
 
     model_config = ConfigDict(from_attributes=True)
 
