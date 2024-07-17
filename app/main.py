@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from core import swagger_config
-from database import create_database, create_schema, drop_tables, create_tables
-from domain.auth import auth_router
-from domain.user import user_router
-from domain.etc import etc_router
+from app.core import swagger_config
+from app.database import create_database, create_schema, drop_tables, create_tables
+from app.domain.auth import auth_router
+from app.domain.user import user_router
+from app.domain.etc import etc_router
 
 
 @asynccontextmanager
