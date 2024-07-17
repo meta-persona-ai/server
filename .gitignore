@@ -9,6 +9,7 @@ static/
 *.onnx
 
 # files
+*.db
 
 # Environments
 **/.env
@@ -21,3 +22,4 @@ venv.bak/
 
 # etc
 __pycache__/
+.pytest_cache/

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Enum, Text
-from database import Base
 from sqlalchemy.orm import relationship
+
+from ..database import Base
 
 class Character(Base):
     __tablename__ = "characters"

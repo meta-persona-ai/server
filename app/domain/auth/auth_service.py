@@ -6,7 +6,7 @@ import os
 
 from ...core.logger_config import setup_logger
 from ...lib.google_api import get_google_login_url, get_google_token, get_google_user_data
-from ...models.user_model import User
+from ...models.user import User
 from . import auth_crud
 from ..user import user_service
 
@@ -41,9 +41,9 @@ def auth_google_access_token(access_token: str, db: Session):
 
 def make_access_token(user: User):
     return jwt.encode({
-        "sub": user.id,
-        "name": user.name,
-        "email": user.email,
+        "sub": user.user_id,
+        "name": user.user_name,
+        "email": user.user_email,
         "exp": datetime.now(timezone.utc) + timedelta(hours=1)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
 

@@ -1,7 +1,8 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from datetime import datetime
-from database import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
+from ..database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -16,3 +17,6 @@ class User(Base):
 
     chats = relationship("Chat", back_populates="user")
     chat_logs = relationship("ChatLog", back_populates="user")
+
+from .chat import Chat
+from .chat_log import ChatLog

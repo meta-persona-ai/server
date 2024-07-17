@@ -1,0 +1,55 @@
+from sqlalchemy.orm import Session
+
+from ...models.chat import Chat
+from ...schemas.user.user_request_schema import UserUpdate
+
+
+# def create_chat(db: Session, chat: ChatCreate):
+#     db_chat = Chat(
+#         user_id=chat.user_id,
+#         character_id=chat.character_id,
+#         chat_create_at=chat.chat_create_at or datetime.now()
+#     )
+#     db.add(db_chat)
+#     db.commit()
+#     db.refresh(db_chat)
+#     return db_chat
+
+# # select
+# def get_all_users(db: Session) -> list[User]:
+#     return db.query(User).all()
+
+# def get_user_by_id(user_id: int, db: Session) -> User:
+#     return db.query(User).filter(User.id == user_id).first()
+
+# def get_user_by_email(email: str, db: Session) -> User:
+#     return db.query(User).filter(User.email == email).first()
+
+# # update
+# def update_user_by_id(user_id: int, user_data: UserUpdate, db: Session) -> User:
+#     user_to_update = db.query(User).filter(User.id == user_id).first()
+#     if user_to_update:
+#         for attr, value in vars(user_data).items():
+#             if value is not None and attr != "_sa_instance_state":
+#                 setattr(user_to_update, attr, value)
+#         db.commit()
+#         return user_to_update
+#     return None
+
+# # delete
+# def delete_user_by_id(user_id: int, db: Session) -> bool:
+#     user_to_delete = db.query(User).filter(User.id == user_id).first()
+#     if user_to_delete:
+#         db.delete(user_to_delete)
+#         db.commit()
+#         return True
+#     return False
+
+# # deactivate
+# def deactivate_user_by_id(user_id: int, db: Session) -> bool:
+#     user_to_deactivate = db.query(User).filter(User.id == user_id).first()
+#     if user_to_deactivate:
+#         user_to_deactivate.is_active = False
+#         db.commit()
+#         return user_to_deactivate
+#     return None
