@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 import jwt
 import os
 
-from core.logger_config import setup_logger
-from lib.google_api import get_google_login_url, get_google_token, get_google_user_data
-from models.user_model import User
+from ...core.logger_config import setup_logger
+from ...lib.google_api import get_google_login_url, get_google_token, get_google_user_data
+from ...models.user_model import User
 from . import auth_crud
 from ..user import user_service
 

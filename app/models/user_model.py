@@ -1,11 +1,10 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from datetime import datetime
 
-from database import Base
+from ..database import Base
 
 class User(Base):
     __tablename__ = "users"
-    __table_args__ = {'schema': 'persona'}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), unique=True)
