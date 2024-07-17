@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
-from fastapi.openapi.models import OAuthFlowPassword, SecurityScheme
 
 from app.core import swagger_config
 from app.database import create_database, create_schema, drop_tables, create_tables
@@ -15,7 +13,7 @@ from app.domain.etc import etc_router
 async def lifespan(app: FastAPI):
     create_database()
     create_schema()
-    # drop_tables()
+    drop_tables()
     create_tables()
     yield
 

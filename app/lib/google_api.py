@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import requests
 import os
 
+from ..core.logger_config import setup_logger
 from ..schemas.auth_schema import UserCreate
 
 load_dotenv()
@@ -9,6 +10,7 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
 
+logger = setup_logger()
 
 def get_google_login_url() -> str:
     return f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
@@ -31,6 +33,8 @@ def get_google_token(code: str) -> str:
 def get_google_user_data(access_token: str) -> UserCreate:
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     user_info_response = user_info.json()
+
+    logger.info(f"📌 user info - {user_info_response}")
     
     user_data = {
         "email": user_info_response.get("email"),
