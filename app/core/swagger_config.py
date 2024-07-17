@@ -20,4 +20,8 @@ tags_metadata = [
         "name": "User",
         "description": "유저 관련 API입니다."
     },
+    {
+        "name": "Chat",
+        "description": "채팅방 관련 API입니다."
+    },
 ]

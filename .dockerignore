@@ -6,6 +6,7 @@
 # cache
 .cache 
 __pycache__/
+.pytest_cache/
 
 # dockerfiles
 Dockerfile
@@ -22,6 +23,7 @@ static/
 *.jpeg
 *.pt
 *.onnx
+*.db
 
 # etc
 *.zip
