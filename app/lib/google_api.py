@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import requests
 import os
 
-from schemas.auth_schema import UserCreate
+from ..schemas.auth_schema import UserCreate
 
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
