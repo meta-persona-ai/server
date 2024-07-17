@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String, DateTime, Enum, Text, ForeignKey
 from datetime import datetime
 from sqlalchemy.dialects.mysql import VARCHAR
-from database import Base
 from sqlalchemy.orm import relationship
 import enum
+
+from ..database import Base
+
 
 class ChatTypeEnum(enum.Enum):
     user = 'user'

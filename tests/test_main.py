@@ -6,7 +6,7 @@ import pytest
 
 from app.main import app  # FastAPI 앱을 import합니다.
 from app.database import Base, get_db
-from app.models.user_model import User
+from app.models.user import User
 
 # 테스트 데이터베이스를 설정합니다.
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -35,7 +35,7 @@ def db_session():
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
 
-    user = User(email="test@example.com", hashed_password="test", name="Test User")
+    user = User(user_email="test@example.com", user_password="test", user_name="Test User", user_profile="test.jpg")
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -51,37 +51,37 @@ def test_read_user(db_session: Session):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
-    assert data[0]["email"] == "test@example.com"
+    assert data[0]["user_email"] == "test@example.com"
 
 
 def test_read_user_by_id(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.get(f"/api/user/{user_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "test@example.com"
+    assert data["user_email"] == "test@example.com"
 
 
 def test_read_user_by_email(db_session: Session):
     response = client.get("/api/user/email/test@example.com")
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "test@example.com"
+    assert data["user_email"] == "test@example.com"
 
 def test_update_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.put(
         f"/api/user/{user_id}",
-        json={"name": "Updated User"}
+        json={"user_name": "Updated User"}
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["name"] == "Updated User"
+    assert data["user_name"] == "Updated User"
 
 
 def test_deactivate_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.email == "test@example.com").first().id
+    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
     response = client.put(f"/api/user/deactivate/{user_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["is_active"] == False
+    assert data["user_is_active"] == False
