@@ -64,3 +64,13 @@ async def auth_google_token(data: auth_request_schema.LoginGoogleToken, db: Sess
     return {
         "jwt_token": jwt_token,
     }
+
+@router.post("/login/google/id-token", 
+            description="구글 로그인시 발급되는 id-token를 사용하여 로그인합니다."
+            )
+async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Session = Depends(get_db)):
+    logger.info(f"📌 /login/google/id-token - {data}")
+    jwt_token = auth_service.auth_google_id_token(data.id_token, db)
+    # return {
+    #     "jwt_token": jwt_token,
+    # }

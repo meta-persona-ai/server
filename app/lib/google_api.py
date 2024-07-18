@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import requests
 import os
+import jwt
+from jwt import PyJWKClient
 
 from ..core.logger_config import setup_logger
 from ..schemas.auth_schema import UserCreate
@@ -46,3 +48,16 @@ def get_google_user_data(access_token: str) -> UserCreate:
 
     user = UserCreate(**user_data)
     return user
+
+def decode_id_token(id_token: str) -> dict:
+    """
+    ID 토큰을 디코딩하고 검증하여 사용자 정보를 추출합니다.
+    """
+    jwks_url = "https://www.googleapis.com/oauth2/v3/certs"
+    jwks_client = PyJWKClient(jwks_url)
+
+    signing_key = jwks_client.get_signing_key_from_jwt(id_token)
+    
+    user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID)
+    
+    return user_info
