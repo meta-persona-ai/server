@@ -32,17 +32,6 @@ async def read_current_user(authorization: str = Depends(api_key_header), db: Se
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.get("/me/email",
-            description="현재 로그인된 유저의 이메일을 조회합니다.",
-            response_model=User
-            )
-async def read_current_user_email(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
-    user = user_service.get_user_by_email(payload.email, db)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
 @router.delete("/me",
                description="현재 로그인된 유저를 삭제합니다.",
                response_model=dict

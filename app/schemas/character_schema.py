@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from enum import Enum
 
 class CharacterGenderEnum(str, Enum):
@@ -13,8 +13,8 @@ class CharacterCreate(BaseModel):
     character_personality: str | None = None
     character_details: str | None = None
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "character_name": "John Doe",
                 "character_profile": "A brave warrior with a mysterious past.",
@@ -23,6 +23,7 @@ class CharacterCreate(BaseModel):
                 "character_details": "John has traveled across many lands and fought in countless battles. His true origin remains unknown, but his skills in combat are unparalleled."
             }
         }
+    )
 
 class CharacterResponse(BaseModel):
     character_id: int

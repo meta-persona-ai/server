@@ -50,7 +50,7 @@ def make_test_access_token(db: Session):
     if existing_user:
         db_user = existing_user
     else:
-        test_user = UserCreate(user_email="test@example.com", user_password="test", user_name="Test User", user_profile="test.jpg")
+        test_user = UserCreate(user_email=test_email, user_password="test", user_name="Test User", user_profile="test.jpg")
         db_user = auth_crud.create_user(db, test_user)
 
     return jwt_util.make_access_token(db_user)
