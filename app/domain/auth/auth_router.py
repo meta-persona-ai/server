@@ -38,8 +38,6 @@ async def auth_google(code: str, db: Session = Depends(get_db)):
             description="구글 로그인시 발급되는 code를 사용합니다."
             )
 async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Session = Depends(get_db)):
-    logger.info(f"📌 auth_google_code - {data}")
-
     jwt_token = auth_service.auth_google_id_token(data.code, db)
     logger.info(f"📌 return jwt token - {jwt_token}")
 
@@ -51,7 +49,6 @@ async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Sessio
             description="구글 로그인시 발급되는 id-token를 사용하여 로그인합니다."
             )
 async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Session = Depends(get_db)):
-    logger.info(f"📌 /login/google/id-token - {data}")
     jwt_token = auth_service.auth_google_id_token(data.id_token, db)
     logger.info(f"📌 return jwt token - {jwt_token}")
 
