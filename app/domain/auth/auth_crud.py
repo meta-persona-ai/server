@@ -6,10 +6,10 @@ from ...schemas import auth_schema
 
 def create_user(db: Session, user: auth_schema.UserCreate):
     db_user = User(
-        user_email=user.email,
-        user_password=user.hashed_password,
-        user_name=user.name,
-        user_profile=user.picture
+        user_email=user.user_email,
+        user_password=user.user_password,
+        user_name=user.user_name,
+        user_profile=user.user_profile
     )
     db.add(db_user)
     db.commit()
