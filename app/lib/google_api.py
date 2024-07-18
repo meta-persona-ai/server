@@ -50,7 +50,7 @@ def get_google_user_data(access_token: str) -> UserCreate:
     user = UserCreate(**user_data)
     return user
 
-def decode_id_token(id_token: str) -> dict:
+def decode_id_token(id_token: str) -> UserCreate:
     """
     ID 토큰을 디코딩하고 검증하여 사용자 정보를 추출합니다.
     """
@@ -61,4 +61,11 @@ def decode_id_token(id_token: str) -> dict:
     
     user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2)
     
-    return user_info
+    user_data = {
+        "id": int(user_info.get("sub")),
+        "user_email": user_info.get("email"),
+        "user_name": user_info.get("name"),
+        "user_profile": user_info.get("picture"),
+    }
+    user = UserCreate(**user_data)
+    return user
