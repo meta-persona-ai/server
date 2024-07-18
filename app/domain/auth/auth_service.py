@@ -2,32 +2,32 @@ from sqlalchemy.orm import Session
 import os
 
 from ...core.logger_config import setup_logger
-from ...lib.google_api import get_google_login_url, get_google_token, get_google_user_data, decode_id_token
-from ...lib.jwt_util import make_access_token, decode_token
+from ...lib import google_api
+from ...lib import jwt_util
 from . import auth_crud
 from ..user import user_service
+from ...schemas.auth_schema import UserCreate
 
 
 logger = setup_logger()
 
 
 def login_google() -> str:
-    return get_google_login_url()
+    return google_api.get_google_login_url()
 
 
 def auth_google(code: str, db: Session):
-    access_token = get_google_token(code)
+    access_token = google_api.get_google_token(code)
 
     return auth_google_access_token(access_token, db)
 
 def auth_google_access_token(access_token: str, db: Session):
-    user_data = get_google_user_data(access_token)
+    user_data = google_api.get_google_user_data(access_token)
 
     logger.info(f"📌 get user data to google - {user_data}")
 
     existing_user = user_service.get_user_by_email(user_data.email, db)
     
-
     if existing_user:
         db_user = existing_user
     else:
@@ -37,10 +37,10 @@ def auth_google_access_token(access_token: str, db: Session):
 
     logger.info(f"📌 login complete!")
 
-    return make_access_token(db_user)
+    return jwt_util.make_access_token(db_user)
 
 def auth_google_id_token(id_token: str, db: Session):
-    user_info = decode_id_token(id_token)
+    user_info = google_api.decode_id_token(id_token)
 
     logger.info(f"📌 get user info to google id token - {user_info}")
 
@@ -58,5 +58,18 @@ def auth_google_id_token(id_token: str, db: Session):
 
     # return make_access_token(db_user)
 
+def make_access_token(db: Session):
+    test_email = "test@example.com"
+
+    existing_user = user_service.get_user_by_email(test_email, db)
+
+    if existing_user:
+        db_user = existing_user
+    else:
+        test_user = UserCreate(user_email="test@example.com", user_password="test", user_name="Test User", user_profile="test.jpg")
+        db_user = auth_crud.create_user(db, test_user)
+
+    return jwt_util.make_access_token(db_user)
+
 def decode_token(token: str):
-    return decode_token(token)
+    return jwt_util.decode_token(token)
