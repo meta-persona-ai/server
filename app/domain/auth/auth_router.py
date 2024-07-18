@@ -33,17 +33,7 @@ async def auth_google(code: str, db: Session = Depends(get_db)):
         "jwt_token": jwt_token,
     }
 
-@router.get("/token",
-            description="발급된 access-token에서 사용자 정보를 반환합니다."
-            )
-async def get_token(token: str = Depends(api_key_header)):
-    try:
-        payload = auth_service.decode_token(token)
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+
 
 # ===================================================================
 
@@ -54,18 +44,8 @@ async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Sessio
     logger.info(f"📌 auth_google_code - {data}")
 
     jwt_token = auth_service.auth_google_id_token(data.code, db)
+    logger.info(f"📌 return jwt token - {jwt_token}")
 
-    # jwt_token = auth_service.auth_google(data.code, db)
-    # return {
-    #     "jwt_token": jwt_token,
-    # }
-
-@router.post("/login/google/access-token", 
-            description="구글 로그인시 발급되는 access-token를 사용합니다."
-            )
-async def auth_google_token(data: auth_request_schema.LoginGoogleToken, db: Session = Depends(get_db)):
-    logger.info(f"📌 auth_google_token - {data}")
-    jwt_token = auth_service.auth_google_access_token(data.token, db)
     return {
         "jwt_token": jwt_token,
     }
@@ -80,11 +60,25 @@ async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Se
     #     "jwt_token": jwt_token,
     # }
 
+# ===================================================================
+
 @router.post("/test/access-token", 
             description="테스트용 access-token을 반환합니다."
             )
 async def auth_google_token(db: Session = Depends(get_db)):
-    jwt_token = auth_service.make_access_token(db)
+    jwt_token = auth_service.make_test_access_token(db)
     return {
         "jwt_token": jwt_token,
     }
+
+@router.get("/token",
+            description="발급된 access-token에서 사용자 정보를 반환합니다."
+            )
+async def get_token(token: str = Depends(api_key_header)):
+    try:
+        payload = auth_service.decode_token(token)
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")

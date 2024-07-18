@@ -16,34 +16,20 @@ def login_google() -> str:
     return google_api.get_google_login_url()
 
 
-def auth_google(code: str, db: Session):
+def auth_google_web(code: str, db: Session):
     access_token = google_api.get_google_token(code)
+    user = google_api.get_google_user_data(access_token)
 
-    return auth_google_access_token(access_token, db)
+    return sign_in_or_login(user, db)
 
-def auth_google_access_token(access_token: str, db: Session):
-    user_data = google_api.get_google_user_data(access_token)
-
-    logger.info(f"📌 get user data to google - {user_data}")
-
-    existing_user = user_service.get_user_by_email(user_data.email, db)
-    
-    if existing_user:
-        db_user = existing_user
-    else:
-        db_user = auth_crud.create_user(db, user_data)
-
-        logger.info(f"📌 successfully make user - {db_user}")
-
-    logger.info(f"📌 login complete!")
-
-    return jwt_util.make_access_token(db_user)
 
 def auth_google_id_token(id_token: str, db: Session):
     user = google_api.decode_id_token(id_token)
 
-    logger.info(f"📌 get user info to google id token - {user}")
+    return sign_in_or_login(user, db)
 
+
+def sign_in_or_login(user: UserCreate, db: Session):
     existing_user = user_service.get_user_by_email(user.user_email, db)
     if existing_user:
         db_user = existing_user
@@ -55,6 +41,7 @@ def auth_google_id_token(id_token: str, db: Session):
     logger.info(f"📌 login complete!")
 
     return jwt_util.make_access_token(db_user)
+
 
 def make_test_access_token(db: Session):
     test_email = "test@example.com"
