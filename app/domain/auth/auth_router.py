@@ -52,10 +52,13 @@ async def get_token(token: str = Depends(api_key_header)):
             )
 async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Session = Depends(get_db)):
     logger.info(f"📌 auth_google_code - {data}")
-    jwt_token = auth_service.auth_google(data.code, db)
-    return {
-        "jwt_token": jwt_token,
-    }
+
+    jwt_token = auth_service.auth_google_id_token(data.id_token, db)
+    
+    # jwt_token = auth_service.auth_google(data.code, db)
+    # return {
+    #     "jwt_token": jwt_token,
+    # }
 
 @router.post("/login/google/access-token", 
             description="구글 로그인시 발급되는 access-token를 사용합니다."
