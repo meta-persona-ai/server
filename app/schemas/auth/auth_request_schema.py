@@ -6,3 +6,6 @@ class LoginGoogleCode(BaseModel):
 
 class LoginGoogleToken(BaseModel):
     token: str
+
+class LoginGoogleIdToken(BaseModel):
+    id_token: str
