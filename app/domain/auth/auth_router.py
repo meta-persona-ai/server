@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer, APIKeyHeader
+from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 import jwt
 
@@ -15,7 +15,6 @@ router = APIRouter(
     tags=["Auth"]
 )
 
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 api_key_header = APIKeyHeader(name="Authorization")
 
 
@@ -28,12 +27,10 @@ async def login_google():
 
 @router.get("/test/google")
 async def auth_google(code: str, db: Session = Depends(get_db)):
-    jwt_token = auth_service.auth_google(code, db)
+    jwt_token = auth_service.auth_google_web(code, db)
     return {
         "jwt_token": jwt_token,
     }
-
-
 
 # ===================================================================
 
@@ -56,9 +53,11 @@ async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Sessio
 async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Session = Depends(get_db)):
     logger.info(f"📌 /login/google/id-token - {data}")
     jwt_token = auth_service.auth_google_id_token(data.id_token, db)
-    # return {
-    #     "jwt_token": jwt_token,
-    # }
+    logger.info(f"📌 return jwt token - {jwt_token}")
+
+    return {
+        "jwt_token": jwt_token,
+    }
 
 # ===================================================================
 
@@ -74,7 +73,8 @@ async def auth_google_token(db: Session = Depends(get_db)):
 @router.get("/token",
             description="발급된 access-token에서 사용자 정보를 반환합니다."
             )
-async def get_token(token: str = Depends(api_key_header)):
+async def get_token(authorization: str = Depends(api_key_header)):
+    token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
     try:
         payload = auth_service.decode_token(token)
         return payload

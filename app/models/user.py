@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, BigInteger, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -7,7 +7,7 @@ from ..database import Base
 class User(Base):
     __tablename__ = "users"
 
-    user_id = Column(BigInteger , primary_key=True, autoincrement=True)
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
     user_email = Column(String(255), unique=True)
     user_password = Column(String(255))
     user_name = Column(String(255))

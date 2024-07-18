@@ -35,16 +35,13 @@ def get_google_token(code: str) -> str:
 
 def get_google_user_data(access_token: str) -> UserCreate:
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
-    user_info_response = user_info.json()
-
-    logger.info(f"📌 user info - {user_info_response}")
+    user_info_response = dict(user_info.json())
     
     user_data = {
-        "email": user_info_response.get("email"),
-        "name": user_info_response.get("name"),
-        "picture": user_info_response.get("picture"),
-        "is_active": True,
-        "hashed_password": None
+        "user_id": int(user_info_response.get("id")),
+        "user_email": user_info_response.get("email"),
+        "user_name": user_info_response.get("name"),
+        "user_profile": user_info_response.get("picture"),
     }
 
     user = UserCreate(**user_data)
@@ -59,7 +56,7 @@ def decode_id_token(id_token: str) -> UserCreate:
 
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
     
-    user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2)
+    user_info = dict(jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2))
     
     user_data = {
         "user_id": int(user_info.get("sub")),

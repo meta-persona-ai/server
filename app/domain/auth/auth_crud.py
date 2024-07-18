@@ -6,7 +6,6 @@ from ...schemas import auth_schema
 
 def create_user(db: Session, user: auth_schema.UserCreate):
     db_user = User(
-        user_id=user.user_id,
         user_email=user.user_email,
         user_password=user.user_password,
         user_name=user.user_name,

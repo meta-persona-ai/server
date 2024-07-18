@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-import os
 
 from ...core.logger_config import setup_logger
 from ...lib import google_api
@@ -35,10 +34,9 @@ def sign_in_or_login(user: UserCreate, db: Session):
         db_user = existing_user
     else:
         db_user = auth_crud.create_user(db, user)
+        logger.info(f"📌 successfully sign in - id: {db_user.user_id}, name: {db_user.user_name}, email: {db_user.user_email}")
 
-        logger.info(f"📌 successfully make user - id: {db_user.user_id}, name: {db_user.user_name}, email: {db_user.user_email}")
-
-    logger.info(f"📌 login complete!")
+    logger.info(f"📌 login complete! - id: {db_user.user_id}, name: {db_user.user_name}")
 
     return jwt_util.make_access_token(db_user)
 
@@ -55,6 +53,7 @@ def make_test_access_token(db: Session):
         db_user = auth_crud.create_user(db, test_user)
 
     return jwt_util.make_access_token(db_user)
+
 
 def decode_token(token: str):
     return jwt_util.decode_token(token)
