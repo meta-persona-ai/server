@@ -54,7 +54,7 @@ jobs:
             podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
             # Run the new container
-            podman run -d --name ${{ env.CONTAINER_NAME }} -p 7070:8000 -v /root/security/persona-app/.env:/app/.env docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            
+            podman run -d --name ${{ env.CONTAINER_NAME }} -p 7070:8000 -v /root/security/persona-app/.env:/app/.env -e TZ=Asia/Seoul docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
             # Clean up unused Docker images
             podman image prune -af
