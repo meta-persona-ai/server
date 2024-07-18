@@ -1,25 +1,20 @@
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import create_engine
 from fastapi.testclient import TestClient
-from sqlalchemy.ext.declarative import declarative_base
 import pytest
 
-from app.main import app  # FastAPI 앱을 import합니다.
+from app.main import app
 from app.database import Base, get_db
 from app.models.user import User
 
-# 테스트 데이터베이스를 설정합니다.
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 테스트용 데이터베이스를 초기화합니다.
 Base.metadata.create_all(bind=engine)
 
-# FastAPI 앱에 대한 테스트 클라이언트를 설정합니다.
 client = TestClient(app)
 
-# 테스트용 데이터베이스 세션을 반환하는 종속성을 정의합니다.
 def override_get_db():
     try:
         db = TestingSessionLocal()
@@ -29,7 +24,6 @@ def override_get_db():
 
 app.dependency_overrides[get_db] = override_get_db
 
-# 테스트 전에 테스트 데이터베이스를 초기화하고 데이터를 추가합니다.
 @pytest.fixture(scope="module")
 def db_session():
     Base.metadata.create_all(bind=engine)
@@ -46,7 +40,7 @@ def db_session():
     Base.metadata.drop_all(bind=engine)
 
 
-def test_read_user(db_session: Session):
+def test_read_users(db_session: Session):
     response = client.get(f"/api/user/")
     assert response.status_code == 200
     data = response.json()
@@ -54,25 +48,31 @@ def test_read_user(db_session: Session):
     assert data[0]["user_email"] == "test@example.com"
 
 
-def test_read_user_by_id(db_session: Session):
-    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
-    response = client.get(f"/api/user/{user_id}")
+def test_read_current_user(db_session: Session):
+    response = client.post("/api/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwt_token")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+
+    response = client.get(f"/api/user/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
+    assert data["user_name"] == "Test User"
     assert data["user_email"] == "test@example.com"
 
 
-def test_read_user_by_email(db_session: Session):
-    response = client.get("/api/user/email/test@example.com")
+def test_update_current_user(db_session: Session):
+    response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    data = response.json()
-    assert data["user_email"] == "test@example.com"
+    test_token = response.json().get("jwt_token")
 
-def test_update_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
+    headers = {"Authorization": f"Bearer {test_token}"}
+
     response = client.put(
-        f"/api/user/{user_id}",
-        json={"user_name": "Updated User"}
+        f"/api/user/me",
+        json={"user_name": "Updated User"},
+        headers=headers
     )
     assert response.status_code == 200
     data = response.json()
@@ -80,8 +80,15 @@ def test_update_user(db_session: Session):
 
 
 def test_deactivate_user(db_session: Session):
-    user_id = db_session.query(User).filter(User.user_email == "test@example.com").first().user_id
-    response = client.put(f"/api/user/deactivate/{user_id}")
+    response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    data = response.json()
-    assert data["user_is_active"] == False
+    test_token = response.json().get("jwt_token")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+
+    response = client.put(f"/api/user/me/deactivate", headers=headers)
+    assert response.status_code == 200
+
+    test_user = db_session.query(User).filter(User.user_email == "test@example.com").first()
+    db_session.refresh(test_user)
+    assert test_user.user_is_active == False

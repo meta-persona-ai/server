@@ -1,7 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class ChatCreate(BaseModel):
-    chat_id: int
-    user_id: str
-    character_id: str
+    chat_id: int | None = None
+    user_id: int
+    character_id: int

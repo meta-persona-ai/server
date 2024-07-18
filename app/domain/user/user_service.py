@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
 from . import user_crud
-from ...models.user import User
-from ...schemas.user.user_request_schema import UserUpdate
+from app.models.user import User
+from app.schemas.user_request_schema import UserUpdate
 
 
 # select

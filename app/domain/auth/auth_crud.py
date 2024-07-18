@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
 from ...models.user import User
-from ...schemas import auth_schema
+from ...schemas.user_schema import UserCreate
 
 
-def create_user(db: Session, user: auth_schema.UserCreate):
+def create_user(db: Session, user: UserCreate):
     db_user = User(
         user_email=user.user_email,
         user_password=user.user_password,

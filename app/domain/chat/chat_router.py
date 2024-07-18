@@ -1,23 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
+from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
-from ...database import get_db
-from ...schemas.user.user_request_schema import User, UserUpdate
-from . import user_service
+from app.database import get_db
+from app.lib import jwt_util
+from app.schemas.chat_schema import ChatCreate
+from . import chat_service
 
 
 router = APIRouter(
     prefix="/api/chat",
     tags=["Chat"]
 )
-
+api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/create",
             description="채팅방을 만듭니다.",
-            response_model=list[User]
             )
-async def create_chat(db: Session = Depends(get_db)):
-    return user_service.create_chat(db)
+async def create_chat(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    chat = ChatCreate(user_id=payload.id, character_id=1)
+    return chat_service.create_chat(chat, db)
 
 # @router.get("/",
 #             description="모든 유저를 조회합니다.",
