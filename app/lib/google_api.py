@@ -9,6 +9,7 @@ from ..schemas.auth_schema import UserCreate
 
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_ID2 = os.getenv('GOOGLE_CLIENT_ID2')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
 
@@ -58,6 +59,6 @@ def decode_id_token(id_token: str) -> dict:
 
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
     
-    user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID)
+    user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2)
     
     return user_info
