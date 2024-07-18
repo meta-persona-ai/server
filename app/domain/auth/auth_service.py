@@ -5,7 +5,8 @@ from ...lib import google_api
 from ...lib import jwt_util
 from . import auth_crud
 from ..user import user_service
-from ...schemas.auth_schema import UserCreate
+from ...schemas.user_schema import UserCreate
+from app.schemas.user_schema import UserSchema
 
 
 logger = setup_logger()
@@ -55,5 +56,5 @@ def make_test_access_token(db: Session):
     return jwt_util.make_access_token(db_user)
 
 
-def decode_token(token: str):
-    return jwt_util.decode_token(token)
+def decode_token(authorization: str) -> UserSchema:
+    return jwt_util.decode_token(authorization)

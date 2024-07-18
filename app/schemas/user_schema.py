@@ -9,11 +9,10 @@ class UserCreate(BaseModel):
     user_profile: str | None = None
     user_is_active: bool = True
 
-class User(BaseModel):
+class UserSchema(BaseModel):
     id: int
     email: str
     name: str
     picture: str | None = None
-    is_active: bool = True
 
     model_config = ConfigDict(from_attributes=True)

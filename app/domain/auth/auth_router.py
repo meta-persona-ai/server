@@ -5,17 +5,17 @@ import jwt
 
 from ...database import get_db
 from ...core.logger_config import setup_logger
-from ...schemas.auth import auth_request_schema
+from ...schemas import auth_request_schema
 from . import auth_service
 
+
 logger = setup_logger()
+api_key_header = APIKeyHeader(name="Authorization")
 
 router = APIRouter(
     prefix="/api/auth",
     tags=["Auth"]
 )
-
-api_key_header = APIKeyHeader(name="Authorization")
 
 
 @router.get("/login/google",
@@ -65,9 +65,8 @@ async def get_test_access_token(db: Session = Depends(get_db)):
 @router.get("/token",
             description="발급된 access-token에서 사용자 정보를 반환합니다.")
 async def get_user_info_from_token(authorization: str = Depends(api_key_header)):
-    token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
     try:
-        payload = auth_service.decode_token(token)
+        payload = auth_service.decode_token(authorization)
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")

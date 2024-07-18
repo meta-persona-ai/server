@@ -5,7 +5,7 @@ import jwt
 from jwt import PyJWKClient
 
 from ..core.logger_config import setup_logger
-from ..schemas.auth_schema import UserCreate
+from ..schemas.user_schema import UserCreate
 
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')

@@ -9,7 +9,7 @@
 
         async function loginWithGoogle() {
             try {
-                const response = await fetch('/api/auth/test/login/google');
+                const response = await fetch('/api/auth/login/google');
                 const data = await response.json();
                 window.location.href = data.url;
             } catch (error) {
@@ -22,7 +22,7 @@
             const code = params.get('code');
             if (code) {
                 try {
-                    const response = await fetch(`/api/auth/test/google?code=${code}`);
+                    const response = await fetch(`/api/auth/login/google/callback?code=${code}`);
                     const data = await response.json();
                     currentJwtToken = data.jwt_token;
                     document.getElementById('jwt-token').textContent = `JWT Token: ${currentJwtToken}`;

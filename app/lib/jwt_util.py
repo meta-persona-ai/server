@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 from ..models.user import User
+from app.schemas.user_schema import UserSchema
 
 
 load_dotenv()
@@ -11,7 +12,7 @@ JWT_SECRET = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
 
 
-def make_access_token(user: User):
+def make_access_token(user: User) -> str:
     return jwt.encode({
         "id": user.user_id,
         "name": user.user_name,
@@ -20,6 +21,7 @@ def make_access_token(user: User):
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
-def decode_token(token: str):
-    payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+def decode_token(authorization: str) -> UserSchema:
+    token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
+    payload = UserSchema(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
     return payload
