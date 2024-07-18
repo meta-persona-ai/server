@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, DateTime, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
@@ -8,7 +8,7 @@ class Chat(Base):
     __tablename__ = "chats"
 
     chat_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(BigInteger, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     character_id = Column(Integer, ForeignKey('characters.character_id'), nullable=False)
     chat_create_at = Column(DateTime, default=datetime.now)
 

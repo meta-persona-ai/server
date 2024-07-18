@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Enum, Text, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, String, DateTime, Enum, Text, ForeignKey
 from datetime import datetime
 from sqlalchemy.dialects.mysql import VARCHAR
 from sqlalchemy.orm import relationship
@@ -16,7 +16,7 @@ class ChatLog(Base):
 
     log_id = Column(VARCHAR(255), primary_key=True)
     chat_id = Column(Integer, ForeignKey('chats.chat_id'), nullable=False)
-    user_id = Column(BigInteger, ForeignKey('users.user_id'), nullable=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=True)
     character_id = Column(Integer, ForeignKey('characters.character_id'), nullable=True)
     type = Column(Enum(ChatTypeEnum), nullable=False)
     log_create_at = Column(DateTime, default=datetime.now)
