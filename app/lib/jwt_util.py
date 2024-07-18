@@ -13,7 +13,7 @@ JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
 
 def make_access_token(user: User):
     return jwt.encode({
-        "sub": user.user_id,
+        "id": user.user_id,
         "name": user.user_name,
         "email": user.user_email,
         "exp": datetime.now(timezone.utc) + timedelta(hours=1)

@@ -50,13 +50,13 @@ def auth_google_id_token(id_token: str, db: Session):
     else:
         db_user = auth_crud.create_user(db, user)
 
-        logger.info(f"📌 successfully make user - {db_user}")
+        logger.info(f"📌 successfully make user - id: {db_user.user_id}, name: {db_user.user_name}, email: {db_user.user_email}")
 
     logger.info(f"📌 login complete!")
 
-    # return make_access_token(db_user)
+    return jwt_util.make_access_token(db_user)
 
-def make_access_token(db: Session):
+def make_test_access_token(db: Session):
     test_email = "test@example.com"
 
     existing_user = user_service.get_user_by_email(test_email, db)
