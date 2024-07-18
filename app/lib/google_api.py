@@ -62,7 +62,7 @@ def decode_id_token(id_token: str) -> UserCreate:
     user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2)
     
     user_data = {
-        "id": int(user_info.get("sub")),
+        "user_id": int(user_info.get("sub")),
         "user_email": user_info.get("email"),
         "user_name": user_info.get("name"),
         "user_profile": user_info.get("picture"),
