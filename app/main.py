@@ -6,6 +6,8 @@ from app.core import swagger_config
 from app.database import create_database, create_schema, drop_tables, create_tables
 from app.domain.auth import auth_router
 from app.domain.user import user_router
+from app.domain.character import character_router
+from app.domain.chat import chat_router
 from app.domain.etc import etc_router
 
 
@@ -37,6 +39,8 @@ app.add_middleware(
 # Including API routers
 app.include_router(auth_router.router)
 app.include_router(user_router.router)
+app.include_router(character_router.router)
+app.include_router(chat_router.router)
 app.include_router(etc_router.router)
 
 

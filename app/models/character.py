@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Enum, Text
+from sqlalchemy import Column, Integer, String, Enum, Text, ForeignKey
 from sqlalchemy.orm import relationship
 
 from ..database import Base
@@ -12,6 +12,8 @@ class Character(Base):
     character_gender = Column(Enum('male', 'female', 'other'), nullable=True)
     character_personality = Column(String(255), nullable=True)
     character_details = Column(Text, nullable=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
 
+    user = relationship("User", back_populates="characters")
     chats = relationship("Chat", back_populates="character")
     chat_logs = relationship("ChatLog", back_populates="character")

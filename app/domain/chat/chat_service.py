@@ -5,7 +5,7 @@ from ...schemas.chat_schema import ChatCreate
 
 
 # insert
-def create_chat(db: Session, chat: ChatCreate):
+def create_chat(chat: ChatCreate, db: Session):
     return chat_crud.create_chat(chat, db)
 
 # # select
