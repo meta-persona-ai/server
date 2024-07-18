@@ -40,21 +40,19 @@ def auth_google_access_token(access_token: str, db: Session):
     return jwt_util.make_access_token(db_user)
 
 def auth_google_id_token(id_token: str, db: Session):
-    user_info = google_api.decode_id_token(id_token)
+    user = google_api.decode_id_token(id_token)
 
-    logger.info(f"📌 get user info to google id token - {user_info}")
+    logger.info(f"📌 get user info to google id token - {user}")
 
-    # existing_user = user_service.get_user_by_email(user_data.email, db)
-    
+    existing_user = user_service.get_user_by_email(user.user_email, db)
+    if existing_user:
+        db_user = existing_user
+    else:
+        db_user = auth_crud.create_user(db, user)
 
-    # if existing_user:
-    #     db_user = existing_user
-    # else:
-    #     db_user = auth_crud.create_user(db, user_data)
+        logger.info(f"📌 successfully make user - {db_user}")
 
-    #     logger.info(f"📌 successfully make user - {db_user}")
-
-    # logger.info(f"📌 login complete!")
+    logger.info(f"📌 login complete!")
 
     # return make_access_token(db_user)
 
