@@ -58,7 +58,7 @@ def decode_id_token(id_token: str) -> UserCreate:
     jwks_client = PyJWKClient(jwks_url)
 
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
-    
+
     options = {
         'verify_iat': True
     }
@@ -66,13 +66,13 @@ def decode_id_token(id_token: str) -> UserCreate:
     try:
         user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options, leeway=30)
 
-        token_iat = datetime.fromtimestamp(user_info.get("iat"), tz=pytz.UTC)
-        token_exp = datetime.fromtimestamp(user_info.get("exp"), tz=pytz.UTC)
-        current_time = datetime.now(tz=pytz.UTC)
+        # token_iat = datetime.fromtimestamp(user_info.get("iat"), tz=pytz.UTC)
+        # token_exp = datetime.fromtimestamp(user_info.get("exp"), tz=pytz.UTC)
+        # current_time = datetime.now(tz=pytz.UTC)
 
     except JWTError as e:
         logger.error(f"❌ JWT decoding error: {e}")
-        raise
+        return None
 
     user_data = {
         "user_id": int(user_info.get("sub")),

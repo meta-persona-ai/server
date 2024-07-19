@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from ...core.logger_config import setup_logger
 from ...lib import google_api
@@ -25,6 +26,8 @@ def auth_google_web(code: str, db: Session):
 
 def auth_google_id_token(id_token: str, db: Session):
     user = google_api.decode_id_token(id_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="id token is not valid")
 
     return sign_in_or_login(user, db)
 
