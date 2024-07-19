@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 import pytest
 
 from app.main import app
-from app.database import Base, get_db
+from app.db.database import Base, get_db
 from app.models.user import User
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
