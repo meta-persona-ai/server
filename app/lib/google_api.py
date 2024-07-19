@@ -4,6 +4,8 @@ import os
 import jwt
 from jwt import PyJWKClient
 from jose.exceptions import JWTError
+from datetime import datetime
+import pytz
 
 from ..core.logger_config import setup_logger
 from ..schemas.user_schema import UserCreate
@@ -64,6 +66,13 @@ def decode_id_token(id_token: str) -> UserCreate:
 
     try:
         user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options)
+
+        token_iat = datetime.fromtimestamp(user_info.get("iat"), tz=pytz.UTC)
+        current_time = datetime.now(tz=pytz.UTC)
+    
+        print(f"JWT 발급 시점 (iat): {token_iat}")
+        print(f"현재 서버 시간: {current_time}")
+
     except JWTError as e:
         print(f"JWT 디코딩 오류: {e}")
         raise
