@@ -3,6 +3,7 @@ import requests
 import os
 import jwt
 from jwt import PyJWKClient
+from jose.exceptions import JWTError
 
 from ..core.logger_config import setup_logger
 from ..schemas.user_schema import UserCreate
@@ -55,9 +56,18 @@ def decode_id_token(id_token: str) -> UserCreate:
     jwks_client = PyJWKClient(jwks_url)
 
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
-    
-    user_info = dict(jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2))
-    
+
+    # 'iat' 클레임 검증을 비활성화
+    options = {
+        'verify_iat': False
+    }
+
+    try:
+        user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options)
+    except JWTError as e:
+        print(f"JWT 디코딩 오류: {e}")
+        raise
+
     user_data = {
         "user_id": int(user_info.get("sub")),
         "user_email": user_info.get("email"),
