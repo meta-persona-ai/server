@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, DateTime, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
-from ..database import Base
+from ..db.database import Base
 
 class Chat(Base):
     __tablename__ = "chats"
