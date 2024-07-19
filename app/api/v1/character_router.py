@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.db.database import get_db
 from app.lib import jwt_util
 from app.schemas.character_schema import CharacterCreate, CharacterResponse, CharacterUpdate
 
-from . import character_service
+from ...services import character_service
 
 router = APIRouter(
     prefix="/api/characters",

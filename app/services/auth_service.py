@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from ...core.logger_config import setup_logger
-from ...lib import google_api
-from ...lib import jwt_util
-from . import auth_crud
-from ..user import user_service
-from ...schemas.user_schema import UserCreate
+from ..core.logger_config import setup_logger
+from ..lib import google_api
+from ..lib import jwt_util
+from ..crud import auth_crud
+from ..services import user_service
+from ..schemas.user_schema import UserCreate
 from app.schemas.user_schema import UserSchema
 
 
@@ -37,7 +37,7 @@ def sign_in_or_login(user: UserCreate, db: Session):
     if existing_user:
         db_user = existing_user
     else:
-        db_user = auth_crud.create_user(db, user)
+        db_user = auth_crud.create_user(user, db)
         logger.info(f"📌 successfully sign in - id: {db_user.user_id}, name: {db_user.user_name}, email: {db_user.user_email}")
 
     logger.info(f"📌 login complete! - id: {db_user.user_id}, name: {db_user.user_name}")
@@ -54,7 +54,7 @@ def make_test_access_token(db: Session):
         db_user = existing_user
     else:
         test_user = UserCreate(user_email=test_email, user_password="test", user_name="Test User", user_profile="test.jpg")
-        db_user = auth_crud.create_user(db, test_user)
+        db_user = auth_crud.create_user(test_user, db)
 
     return jwt_util.make_access_token(db_user)
 

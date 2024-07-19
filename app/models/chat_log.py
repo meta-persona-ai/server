@@ -1,10 +1,10 @@
-from sqlalchemy import Column, Integer, String, DateTime, Enum, Text, ForeignKey
+from sqlalchemy import Column, Integer, DateTime, Enum, Text, ForeignKey
 from datetime import datetime
 from sqlalchemy.dialects.mysql import VARCHAR
 from sqlalchemy.orm import relationship
 import enum
 
-from ..database import Base
+from ..db.database import Base
 
 
 class ChatTypeEnum(enum.Enum):

@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from ...models.character import Character
-from ...schemas.character_schema import CharacterCreate, CharacterUpdate
+from ..models.character import Character
+from ..schemas.character_schema import CharacterCreate, CharacterUpdate
 
 # insert
 def create_character(character: CharacterCreate, user_id: int, db: Session) -> Character:

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from . import chat_crud
-from ...schemas.chat_schema import ChatCreate
+from ..crud import chat_crud
+from ..schemas.chat_schema import ChatCreate
 
 
 # insert
@@ -12,8 +12,8 @@ def create_chat(chat: ChatCreate, db: Session):
 # def get_users(db: Session) -> list[User]:
 #     return chat_crud.get_all_users(db)
 
-# def get_user_by_id(user_id: int, db: Session) -> User:
-#     return chat_crud.get_user_by_id(user_id, db)
+def get_chats_by_id(user_id: int, db: Session):
+    return chat_crud.get_chats_by_id(user_id, db)
 
 # def get_user_by_email(email: str, db: Session) -> User:
 #     return chat_crud.get_user_by_email(email, db)

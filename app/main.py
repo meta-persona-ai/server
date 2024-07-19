@@ -3,12 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core import swagger_config
-from app.database import create_database, create_schema, drop_tables, create_tables
-from app.domain.auth import auth_router
-from app.domain.user import user_router
-from app.domain.character import character_router
-from app.domain.chat import chat_router
-from app.domain.etc import etc_router
+from app.db.database import create_database, create_schema, drop_tables, create_tables
+from app.db.initial_data import init_db
+from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router
 
 
 @asynccontextmanager
@@ -17,6 +14,9 @@ async def lifespan(app: FastAPI):
     create_schema()
     drop_tables()
     create_tables()
+
+    init_db()
+
     yield
 
 app = FastAPI(

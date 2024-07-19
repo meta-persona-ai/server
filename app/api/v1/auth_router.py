@@ -3,10 +3,10 @@ from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 import jwt
 
-from ...database import get_db
+from ...db.database import get_db
 from ...core.logger_config import setup_logger
 from ...schemas import auth_request_schema
-from . import auth_service
+from ...services import auth_service
 
 
 logger = setup_logger()
