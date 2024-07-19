@@ -33,18 +33,29 @@ def db_session():
     db.close()
     Base.metadata.drop_all(bind=engine)
 
-
 def test_get_test_token(db_session: Session):
+    """
+    테스트용 토큰 생성 테스트.
+    이 테스트는 /api/auth/token/test 엔드포인트를 호출하여 JWT 토큰을 생성하는지 확인합니다.
+    """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
     assert "jwt_token" in response.json()
 
 def test_google_login_url(db_session: Session):
+    """
+    구글 로그인 URL 테스트.
+    이 테스트는 /api/auth/login/google 엔드포인트를 호출하여 구글 로그인 URL을 가져오는지 확인합니다.
+    """
     response = client.get("/api/auth/login/google")
     assert response.status_code == 200
     assert "url" in response.json()
 
 def test_get_user_info_from_token(db_session: Session):
+    """
+    토큰으로부터 사용자 정보 가져오기 테스트.
+    이 테스트는 /api/auth/token 엔드포인트를 호출하여 JWT 토큰으로부터 사용자 정보를 가져오는지 확인합니다.
+    """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwt_token")

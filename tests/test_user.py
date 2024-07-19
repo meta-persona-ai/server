@@ -39,16 +39,22 @@ def db_session():
     db.close()
     Base.metadata.drop_all(bind=engine)
 
-
 def test_read_users(db_session: Session):
+    """
+    모든 사용자 조회 테스트.
+    이 테스트는 /api/user/ 엔드포인트를 호출하여 모든 사용자를 조회하는지 확인합니다.
+    """
     response = client.get(f"/api/user/")
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
     assert data[0]["user_email"] == "test@example.com"
 
-
 def test_read_current_user(db_session: Session):
+    """
+    현재 로그인한 사용자 정보 조회 테스트.
+    이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 조회하는지 확인합니다.
+    """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwt_token")
@@ -61,8 +67,11 @@ def test_read_current_user(db_session: Session):
     assert data["user_name"] == "Test User"
     assert data["user_email"] == "test@example.com"
 
-
 def test_update_current_user(db_session: Session):
+    """
+    현재 로그인한 사용자 정보 업데이트 테스트.
+    이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 업데이트하는지 확인합니다.
+    """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwt_token")
@@ -78,8 +87,11 @@ def test_update_current_user(db_session: Session):
     data = response.json()
     assert data["user_name"] == "Updated User"
 
-
 def test_deactivate_user(db_session: Session):
+    """
+    사용자 비활성화 테스트.
+    이 테스트는 /api/user/me/deactivate 엔드포인트를 호출하여 현재 로그인한 사용자를 비활성화하는지 확인합니다.
+    """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwt_token")
