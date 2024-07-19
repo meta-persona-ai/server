@@ -61,7 +61,7 @@ def decode_id_token(id_token: str) -> UserCreate:
 
     # 'iat' 클레임 검증을 비활성화
     options = {
-        'verify_iat': False
+        'verify_iat': True
     }
 
     try:
