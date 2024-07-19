@@ -68,9 +68,11 @@ def decode_id_token(id_token: str) -> UserCreate:
         user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options)
 
         token_iat = datetime.fromtimestamp(user_info.get("iat"), tz=pytz.UTC)
+        token_exp = datetime.fromtimestamp(user_info.get("exp"), tz=pytz.UTC)
         current_time = datetime.now(tz=pytz.UTC)
     
         print(f"JWT 발급 시점 (iat): {token_iat}")
+        print(f"JWT 만료 시점 (exp): {token_exp}")
         print(f"현재 서버 시간: {current_time}")
 
     except JWTError as e:
