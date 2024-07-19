@@ -6,7 +6,7 @@ import jwt
 from ...database import get_db
 from ...core.logger_config import setup_logger
 from ...schemas import auth_request_schema
-from . import auth_service
+from ...services import auth_service
 
 
 logger = setup_logger()

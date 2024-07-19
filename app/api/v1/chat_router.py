@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.lib import jwt_util
 from app.schemas.chat_schema import ChatCreate
-from . import chat_service
+from ...services import chat_service
 
 
 router = APIRouter(
@@ -17,9 +17,9 @@ api_key_header = APIKeyHeader(name="Authorization")
 @router.post("/create",
             description="채팅방을 만듭니다.",
             )
-async def create_chat(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+async def create_chat(character_id: str, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
-    chat = ChatCreate(user_id=payload.id, character_id=1)
+    chat = ChatCreate(user_id=payload.id, character_id=character_id)
     return chat_service.create_chat(chat, db)
 
 # @router.get("/",

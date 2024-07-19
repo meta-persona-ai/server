@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from ...database import get_db
 from ...schemas.user_request_schema import User, UserUpdate
-from . import user_service
+from ...services import user_service
 from app.lib import jwt_util
 
 router = APIRouter(

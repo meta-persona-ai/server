@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from ...core.logger_config import setup_logger
-from ...lib import google_api
-from ...lib import jwt_util
-from . import auth_crud
-from ..user import user_service
-from ...schemas.user_schema import UserCreate
+from ..core.logger_config import setup_logger
+from ..lib import google_api
+from ..lib import jwt_util
+from ..crud import auth_crud
+from ..services import user_service
+from ..schemas.user_schema import UserCreate
 from app.schemas.user_schema import UserSchema
 
 
