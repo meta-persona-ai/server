@@ -58,25 +58,20 @@ def decode_id_token(id_token: str) -> UserCreate:
     jwks_client = PyJWKClient(jwks_url)
 
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
-
-    # 'iat' 클레임 검증을 비활성화
+    
     options = {
         'verify_iat': True
     }
 
     try:
-        user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options)
+        user_info = jwt.decode(id_token, signing_key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID2, options=options, leeway=30)
 
         token_iat = datetime.fromtimestamp(user_info.get("iat"), tz=pytz.UTC)
         token_exp = datetime.fromtimestamp(user_info.get("exp"), tz=pytz.UTC)
         current_time = datetime.now(tz=pytz.UTC)
-    
-        print(f"JWT 발급 시점 (iat): {token_iat}")
-        print(f"JWT 만료 시점 (exp): {token_exp}")
-        print(f"현재 서버 시간: {current_time}")
 
     except JWTError as e:
-        print(f"JWT 디코딩 오류: {e}")
+        logger.error(f"❌ JWT decoding error: {e}")
         raise
 
     user_data = {
