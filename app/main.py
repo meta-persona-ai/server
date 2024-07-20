@@ -27,7 +27,8 @@ app = FastAPI(
     description=config["description"],
     version=config["version"],
     license_info=config["license_info"],
-    openapi_tags=config["tags_metadata"]
+    openapi_tags=config["tags_metadata"],
+    lifespan=lifespan
 )
 
 # Add CORS Middleware
