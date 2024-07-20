@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 fastapi-slim = "*"
 python-multipart = "*"
-uvicorn = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 pyjwt = "*"
 passlib = {extras = ["bcrypt"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
@@ -17,7 +17,6 @@ pymysql = "*"
 pytz = "*"
 
 [dev-packages]
-fastapi = "*"
 pytest = "*"
 
 [requires]
