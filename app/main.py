@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.core import swagger_config
+from app.core.swagger_config import SwaggerConfig
 from app.db.database import create_database, create_schema, drop_tables, create_tables
 from app.db.initial_data import init_db
 from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router
@@ -19,13 +19,16 @@ async def lifespan(app: FastAPI):
 
     yield
 
+swagger_config = SwaggerConfig()
+config = swagger_config.get_config()
+
 app = FastAPI(
-    title=swagger_config.title,
-    description=swagger_config.description,
-    version=swagger_config.version,
-    openapi_tags=swagger_config.tags_metadata,
-    lifespan=lifespan
-    )
+    title=config["title"],
+    description=config["description"],
+    version=config["version"],
+    license_info=config["license_info"],
+    openapi_tags=config["tags_metadata"]
+)
 
 # Add CORS Middleware
 app.add_middleware(
