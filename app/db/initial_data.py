@@ -1,19 +1,57 @@
 from sqlalchemy.orm import Session
 
 from . import database
-from ..schemas import user_schema
-from ..crud import auth_crud, user_crud
+from ..schemas import user_schema, character_schema, chat_schema
+from ..crud import auth_crud, user_crud, character_crud, chat_crud
 
-def init_db():
-    db = Session(bind=database.engine)
+class DatabaseInitializer:
+    def __init__(self, engine):
+        self.engine = engine
+        self.test_email = "test@example.com"
+        self.character_name = "init charater"
 
-    make_init_user(db)
+    def init_db(self):
+        db = Session(bind=self.engine)
 
-    db.close()
+        self._make_init_user(db)
+        self._make_init_character(db)
+        self._make_init_chat(db)
 
-def make_init_user(db: Session):
-    test_email = "test@example.com"
-    existing_user = user_crud.get_user_by_email(test_email, db)
-    if not existing_user:
-        test_user = user_schema.UserCreate(user_email=test_email, user_password="test", user_name="Test User", user_profile="test.jpg")
-        auth_crud.create_user(test_user, db)
+        db.close()
+
+    def _make_init_user(self, db: Session):
+        test_user = user_schema.UserCreate(
+            user_email=self.test_email,
+            user_password="test",
+            user_name="Test User",
+            user_profile="test.jpg"
+        )
+
+        existing_user = user_crud.get_user_by_email(self.test_email, db)
+        if not existing_user:
+            auth_crud.create_user(test_user, db)
+
+    def _make_init_character(self, db: Session):
+        character = character_schema.CharacterCreate(
+            character_name=self.character_name,
+            character_gender="male",
+            character_profile="init profile",
+            character_personality= "init personality",
+            character_details= "init details"
+        )
+
+        init_user = user_crud.get_user_by_email(self.test_email, db)
+        existing_character = character_crud.get_characters_by_name(self.character_name, db)
+        if not existing_character:
+            character_crud.create_character(character, init_user.user_id, db)
+
+    def _make_init_chat(self, db: Session):
+        init_user = user_crud.get_user_by_email(self.test_email, db)
+        init_character = character_crud.get_characters_by_name(self.character_name, db)
+
+        chat = chat_schema.ChatCreate(
+            user_id=init_user.user_id,
+            character_id=init_character.character_id
+        )
+
+        chat_crud.create_chat(chat, db)

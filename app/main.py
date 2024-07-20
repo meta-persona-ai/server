@@ -3,19 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core.swagger_config import SwaggerConfig
-from app.db.database import create_database, create_schema, drop_tables, create_tables
-from app.db.initial_data import init_db
-from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router
+from app.db import database
+from app.db.initial_data import DatabaseInitializer
+from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router, chat_log_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_database()
-    create_schema()
-    drop_tables()
-    create_tables()
+    database.create_database()
+    database.create_schema()
+    database.drop_tables()
+    database.create_tables()
 
-    init_db()
+    initializer = DatabaseInitializer(database.engine)
+    initializer.init_db()
 
     yield
 
@@ -45,6 +46,7 @@ app.include_router(auth_router.router)
 app.include_router(user_router.router)
 app.include_router(character_router.router)
 app.include_router(chat_router.router)
+app.include_router(chat_log_router.router)
 app.include_router(etc_router.router)
 
 
