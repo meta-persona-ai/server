@@ -31,22 +31,13 @@ async def create_chat(character_id: int, authorization: str = Depends(api_key_he
             )
 async def get_my_chat(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
-    return chat_service.get_chats_by_id(payload.id, db)
+    return chat_service.get_chats_by_user_id(payload.id, db)
 
-# @router.put("/{character_id}",
-#             description="특정 캐릭터 정보를 업데이트하는 API입니다.",
-#             response_model=CharacterResponse
-#             )
-# async def update_character(character_id: int, character_update: CharacterUpdate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-#     payload = jwt_util.decode_token(authorization)
-#     updated_character = character_service.update_character_by_id(character_id, character_update, payload.id, db)
-#     return updated_character
-
-# @router.delete("/{character_id}",
-#                description="특정 캐릭터를 삭제하는 API입니다.",
-#                response_model=dict
-#                )
-# async def delete_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-#     payload = jwt_util.decode_token(authorization)
-#     success = character_service.delete_character_by_id(character_id, payload.id, db)
-#     return {"message": "Character deleted successfully"} if success else {"message": "Character deletion failed"}
+@router.delete("/{chat_id}",
+               description="특정 채팅방을 삭제하는 API입니다.",
+               response_model=dict
+               )
+async def delete_chat(chat_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    success = chat_service.delete_chat_by_id(chat_id, payload.id, db)
+    return {"message": "Character deleted successfully"} if success else {"message": "Character deletion failed"}

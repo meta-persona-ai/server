@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from ..crud import chat_crud
+from ..models.chat import Chat
 from ..schemas.chat_schema import ChatCreate
 
 
@@ -8,24 +10,16 @@ from ..schemas.chat_schema import ChatCreate
 def create_chat(chat: ChatCreate, db: Session):
     return chat_crud.create_chat(chat, db)
 
-# # select
-# def get_users(db: Session) -> list[User]:
-#     return chat_crud.get_all_users(db)
+# select
+def get_chats_by_user_id(user_id: int, db: Session) -> list[Chat]:
+    chats = chat_crud.get_chats_by_user_id(user_id, db)
+    if not chats:
+        raise HTTPException(status_code=404, detail="Chats not found")
+    return chats
 
-def get_chats_by_id(user_id: int, db: Session):
-    return chat_crud.get_chats_by_id(user_id, db)
-
-# def get_user_by_email(email: str, db: Session) -> User:
-#     return chat_crud.get_user_by_email(email, db)
-
-# # update
-# def update_user_by_id(user_id: int, user_data: UserUpdate, db: Session) -> User:
-#     return chat_crud.update_user_by_id(user_id, user_data, db)
-
-# # delete
-# def delete_user_by_id(user_id: int, db: Session) -> bool:
-#     return chat_crud.delete_user_by_id(user_id, db)
-
-# # deactivate
-# def deactivate_user_by_id(user_id: int, db: Session) -> bool:
-#     return chat_crud.deactivate_user_by_id(user_id, db)
+# delete
+def delete_chat_by_id(chat_id: int, user_id: int, db: Session) -> bool:
+    success = chat_crud.delete_chat_by_id(chat_id, user_id, db)
+    if not success:
+        raise HTTPException(status_code=404, detail="Chat not found or not authorized to delete")
+    return success

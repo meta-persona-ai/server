@@ -34,16 +34,6 @@ async def auth_google_callback(code: str, db: Session = Depends(get_db)):
         "jwt_token": jwt_token,
     }
 
-@router.post("/login/google/code",
-             description="구글 로그인시 발급되는 code를 사용하여 인증합니다.")
-async def auth_google_code(data: auth_request_schema.LoginGoogleCode, db: Session = Depends(get_db)):
-    jwt_token = auth_service.auth_google_id_token(data.code, db)
-    logger.info(f"📌 return jwt token - {jwt_token}")
-
-    return {
-        "jwt_token": jwt_token,
-    }
-
 @router.post("/login/google/id-token",
              description="구글 로그인시 발급되는 id-token을 사용하여 인증합니다.")
 async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Session = Depends(get_db)):

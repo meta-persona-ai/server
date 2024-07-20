@@ -36,6 +36,12 @@ def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
         return db.query(Character).filter(Character.user_id == user_id).all()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
+    
+def get_characters_by_name(character_name: str, db: Session) -> Character:
+    try:
+        return db.query(Character).filter(Character.character_name == character_name).first()
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail="Database error")
 
 # update
 def update_character_by_id(character_id: int, character_data: CharacterUpdate, user_id: int, db: Session) -> Character:
