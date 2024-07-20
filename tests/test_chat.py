@@ -4,8 +4,10 @@ from fastapi.testclient import TestClient
 import pytest
 
 from app.main import app
+from app.db.initial_data import DatabaseInitializer
 from app.db.database import Base, get_db
 from app.models.character import Character
+from app.models.chat import Chat
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
@@ -28,21 +30,10 @@ app.dependency_overrides[get_db] = override_get_db
 def db_session():
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
-
-    exam_character = {
-        "character_details": "Test details",
-        "character_gender": "male",
-        "character_name": "test",
-        "character_personality": "Test personality",
-        "character_profile": "Test profile",
-        "user_id": 1
-    }
-
-    character = Character(**exam_character)
-    db.add(character)
-    db.commit()
-    db.refresh(character)
     
+    initializer = DatabaseInitializer(engine)
+    initializer.init_db()
+
     yield db
     
     db.close()
@@ -58,9 +49,32 @@ def test_create_chat(db_session: Session):
     
     response = client.post(f"/api/chat?character_id={test_character.character_id}", headers=headers)
     assert response.status_code == 200
+    assert "chat_id" in response.json()
+
+def test_get_my_chat(db_session: Session):
+    response = client.post("/api/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwt_token")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+    
+    response = client.get(f"/api/chat/me", headers=headers)
+    assert response.status_code == 200
     data = response.json()
-    print(data)
-    assert False
-    # data = response.json()
-    # test_character = db_session.query(Character).filter(Character.character_id == data['character_id']).first()
-    # assert test_character.character_name == exam_character.get('character_name')
+    assert len(data) > 0
+
+def test_delete_chat(db_session: Session):
+    response = client.post("/api/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwt_token")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+
+    user_info = client.get("/api/auth/token", headers=headers).json()
+
+    test_chat = db_session.query(Chat).filter(Chat.user_id == user_info['id']).first()
+    
+    response = client.delete(f"/api/chat/{test_chat.character_id}", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['message'] == 'Character deleted successfully'

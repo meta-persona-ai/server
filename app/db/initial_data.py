@@ -7,7 +7,7 @@ from ..crud import auth_crud, user_crud, character_crud, chat_crud
 class DatabaseInitializer:
     def __init__(self, engine):
         self.engine = engine
-        self.test_email = "init@example.com"
+        self.test_email = "test@example.com"
         self.character_name = "init charater"
 
     def init_db(self):
@@ -22,9 +22,9 @@ class DatabaseInitializer:
     def _make_init_user(self, db: Session):
         test_user = user_schema.UserCreate(
             user_email=self.test_email,
-            user_password="init",
-            user_name="init User",
-            user_profile="init.jpg"
+            user_password="test",
+            user_name="Test User",
+            user_profile="test.jpg"
         )
 
         existing_user = user_crud.get_user_by_email(self.test_email, db)
