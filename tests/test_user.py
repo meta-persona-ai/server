@@ -48,7 +48,7 @@ def test_read_users(db_session: Session):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
-    assert data[0]["user_email"] == "test@example.com"
+    assert data[0]["userEmail"] == "test@example.com"
 
 def test_read_current_user(db_session: Session):
     """
@@ -57,15 +57,15 @@ def test_read_current_user(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
     response = client.get(f"/api/user/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data["user_name"] == "Test User"
-    assert data["user_email"] == "test@example.com"
+    assert data["userName"] == "Test User"
+    assert data["userEmail"] == "test@example.com"
 
 def test_update_current_user(db_session: Session):
     """
@@ -74,18 +74,18 @@ def test_update_current_user(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
     response = client.put(
         f"/api/user/me",
-        json={"user_name": "Updated User"},
+        json={"userName": "Updated User"},
         headers=headers
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["user_name"] == "Updated User"
+    assert data["message"] == "User updated successfully"
 
 def test_deactivate_user(db_session: Session):
     """
@@ -94,7 +94,7 @@ def test_deactivate_user(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 

@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from ..models.character import Character
-from ..schemas.character_schema import CharacterCreate, CharacterUpdate
+from ..schemas.schemas import CharacterSchema
 
 # insert
-def create_character(character: CharacterCreate, user_id: int, db: Session) -> Character:
+def create_character(character: CharacterSchema, db: Session) -> Character:
     try:
         db_character = Character(
             character_name=character.character_name,
@@ -14,7 +14,7 @@ def create_character(character: CharacterCreate, user_id: int, db: Session) -> C
             character_gender=character.character_gender,
             character_personality=character.character_personality,
             character_details=character.character_details,
-            user_id=user_id
+            user_id=character.user_id
         )
         db.add(db_character)
         db.commit()
@@ -44,7 +44,7 @@ def get_characters_by_name(character_name: str, db: Session) -> Character:
         raise HTTPException(status_code=500, detail="Database error")
 
 # update
-def update_character_by_id(character_id: int, character_data: CharacterUpdate, user_id: int, db: Session) -> Character:
+def update_character_by_id(character_id: int, character_data: CharacterSchema, user_id: int, db: Session) -> Character:
     try:
         character_to_update = db.query(Character).filter(
             Character.character_id == character_id,

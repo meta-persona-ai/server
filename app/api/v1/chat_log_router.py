@@ -6,7 +6,7 @@ import os
 
 
 router = APIRouter(
-    prefix="/api/chat_log",
+    prefix="/api/chatting",
     tags=["Chat log"]
 )
 api_key_header = APIKeyHeader(name="Authorization")
