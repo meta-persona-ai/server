@@ -8,4 +8,4 @@ class LoginGoogleToken(BaseModel):
     token: str
 
 class LoginGoogleIdToken(BaseModel):
-    id_token: str
+    idToken: str

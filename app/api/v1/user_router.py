@@ -3,9 +3,9 @@ from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from ...db.database import get_db
-from ...schemas.user_request_schema import User, UserUpdate
+from ...schemas.request.user_request_schema import User, UserUpdate
 from ...services import user_service
-from app.lib import jwt_util
+from app.utils import jwt_util
 
 router = APIRouter(
     prefix="/api/user",

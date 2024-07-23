@@ -3,8 +3,9 @@ from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.lib import jwt_util
-from app.schemas.character_schema import CharacterCreate, CharacterResponse, CharacterUpdate
+from app.utils import jwt_util
+from app.schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
+from app.schemas.response.character_response_schema import CharacterResponse
 
 from ...services import character_service
 
@@ -16,11 +17,11 @@ api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
              description="새 캐릭터를 생성하는 API입니다.",
-             response_model=CharacterResponse
             )
 async def create_character(character: CharacterCreate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
-    return character_service.create_character(character, payload.id, db)
+    success = character_service.create_character(character, payload.id, db)
+    return {"message": "Character created successfully"} if success else {"message": "Character creation failed"}
 
 @router.get("/",
             description="모든 캐릭터를 조회하는 API입니다.",

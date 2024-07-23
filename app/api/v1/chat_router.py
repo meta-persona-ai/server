@@ -3,7 +3,7 @@ from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.lib import jwt_util
+from app.utils import jwt_util
 from app.schemas.chat_schema import ChatCreate, ChatResponse
 from app.services import chat_service, character_service
 
