@@ -16,6 +16,7 @@ sqlalchemy = "*"
 pymysql = "*"
 pytz = "*"
 pyhumps = "*"
+fastapi-camelcase = "*"
 
 [dev-packages]
 pytest = "*"
