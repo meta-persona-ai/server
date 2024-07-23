@@ -6,15 +6,16 @@ name = "pypi"
 [packages]
 fastapi-slim = "*"
 python-multipart = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+uvicorn = {extras = ["standard"] }
 pyjwt = "*"
-passlib = {extras = ["bcrypt"], version = "*"}
-python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"] }
+python-jose = {extras = ["cryptography"] }
 requests = "*"
 python-dotenv = "*"
 sqlalchemy = "*"
 pymysql = "*"
 pytz = "*"
+pyhumps = "*"
 
 [dev-packages]
 pytest = "*"

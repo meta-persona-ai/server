@@ -1,17 +1,18 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import ConfigDict
 from enum import Enum
+from fastapi_camelcase import CamelModel
 
 class CharacterGenderEnum(str, Enum):
     male = 'male'
     female = 'female'
     other = 'other'
 
-class CharacterCreate(BaseModel):
-    characterName: str
-    characterProfile: str | None = None
-    characterGender: CharacterGenderEnum | None = None
-    characterPersonality: str | None = None
-    characterDetails: str | None = None
+class CharacterCreate(CamelModel):
+    character_name: str
+    character_profile: str | None = None
+    character_gender: CharacterGenderEnum | None = None
+    character_personality: str | None = None
+    character_details: str | None = None
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -25,9 +26,9 @@ class CharacterCreate(BaseModel):
         }
     )
 
-class CharacterUpdate(BaseModel):
-    characterName: str | None = None
-    characterProfile: str | None = None
-    characterGender: CharacterGenderEnum | None = None
-    characterPersonality: str | None = None
-    characterDetails: str | None = None
+class CharacterUpdate(CamelModel):
+    character_name: str | None = None
+    character_profile: str | None = None
+    character_gender: CharacterGenderEnum | None = None
+    character_personality: str | None = None
+    character_details: str | None = None

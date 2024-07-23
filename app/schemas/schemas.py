@@ -14,6 +14,3 @@ class CharacterSchema(BaseModel):
     character_personality: str | None = None
     character_details: str | None = None
     user_id: int | None = None
-
-    class Config:
-        orm_mode = True

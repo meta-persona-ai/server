@@ -1,12 +1,14 @@
-from pydantic import BaseModel
 from enum import Enum
+from fastapi_camelcase import CamelModel
+
+
 
 class CharacterGenderEnum(str, Enum):
     male = 'male'
     female = 'female'
     other = 'other'
 
-class CharacterResponse(BaseModel):
+class CharacterResponse(CamelModel):
     character_id: int
     character_name: str
     character_profile: str | None = None

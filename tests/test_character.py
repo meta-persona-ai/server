@@ -46,18 +46,18 @@ def test_create_character(db_session: Session):
     headers = {"Authorization": f"Bearer {test_token}"}
 
     exam_character = {
-        "character_details": "Test details",
-        "character_gender": "male",
-        "character_name": "test",
-        "character_personality": "Test personality",
-        "character_profile": "Test profile"
+        "characterDetails": "Test details",
+        "characterGender": "male",
+        "characterName": "test",
+        "characterPersonality": "Test personality",
+        "characterProfile": "Test profile"
     }
     
     response = client.post("/api/characters", json=exam_character, headers=headers)
     assert response.status_code == 200
     data = response.json()
-    test_character = db_session.query(Character).filter(Character.character_id == data['character_id']).first()
-    assert test_character.character_name == exam_character.get('character_name')
+    print(data)
+    assert data['message'] == 'Character created successfully'
 
 def test_get_all_characters(db_session: Session):
     """
@@ -68,7 +68,7 @@ def test_get_all_characters(db_session: Session):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
-    assert data[0]["character_name"] == "test"
+    assert data[0]["characterName"] == "test"
 
 def test_get_my_characters(db_session: Session):
     """
@@ -84,7 +84,7 @@ def test_get_my_characters(db_session: Session):
     response = client.get("/api/characters/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data[0]["character_name"] == "test"
+    assert data[0]["characterName"] == "test"
 
 def test_update_character(db_session: Session):
     """
@@ -99,11 +99,11 @@ def test_update_character(db_session: Session):
     
     response = client.put(
         "/api/characters/1", 
-        json={"character_name": "Updated Character"},
+        json={"characterName": "Updated Character"},
         headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data["character_name"] == "Updated Character"
+    assert data["message"] == "Character updated successfully"
 
 def test_delete_character(db_session: Session):
     """

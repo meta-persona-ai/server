@@ -16,7 +16,8 @@ router = APIRouter(
 api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
-             description="새 캐릭터를 생성하는 API입니다.",
+            description="새 캐릭터를 생성하는 API입니다.",
+            response_model=dict
             )
 async def create_character(character: CharacterCreate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
@@ -40,12 +41,12 @@ async def get_my_characters(authorization: str = Depends(api_key_header), db: Se
 
 @router.put("/{character_id}",
             description="특정 캐릭터 정보를 업데이트하는 API입니다.",
-            response_model=CharacterResponse
+            response_model=dict
             )
 async def update_character(character_id: int, character_update: CharacterUpdate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
-    updated_character = character_service.update_character_by_id(character_id, character_update, payload.id, db)
-    return updated_character
+    success = character_service.update_character_by_id(character_id, character_update, payload.id, db)
+    return {"message": "Character updated successfully"} if success else {"message": "Character update failed"}
 
 @router.delete("/{character_id}",
                description="특정 캐릭터를 삭제하는 API입니다.",
