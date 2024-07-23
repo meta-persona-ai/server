@@ -40,7 +40,7 @@ def test_get_test_token(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    assert "jwt_token" in response.json()
+    assert "jwtToken" in response.json()
 
 def test_google_login_url(db_session: Session):
     """
@@ -58,7 +58,7 @@ def test_get_user_info_from_token(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     response = client.get("/api/auth/token", headers=headers)

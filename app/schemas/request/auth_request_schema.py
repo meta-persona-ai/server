@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from fastapi_camelcase import CamelModel
 
 
 class LoginGoogleCode(BaseModel):
@@ -7,5 +8,5 @@ class LoginGoogleCode(BaseModel):
 class LoginGoogleToken(BaseModel):
     token: str
 
-class LoginGoogleIdToken(BaseModel):
+class LoginGoogleIdToken(CamelModel):
     id_token: str
