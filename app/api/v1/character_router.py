@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.utils import jwt_util
 from app.schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
-from app.schemas.response.character_response_schema import CharacterResponse
+from app.schemas.response.character_response_schema import CharacterResponse, MessageResponse
 
 from ...services import character_service
 
@@ -41,7 +41,7 @@ async def get_my_characters(authorization: str = Depends(api_key_header), db: Se
 
 @router.put("/{character_id}",
             description="특정 캐릭터 정보를 업데이트하는 API입니다.",
-            response_model=dict
+            response_model=MessageResponse
             )
 async def update_character(character_id: int, character_update: CharacterUpdate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
@@ -50,7 +50,7 @@ async def update_character(character_id: int, character_update: CharacterUpdate,
 
 @router.delete("/{character_id}",
                description="특정 캐릭터를 삭제하는 API입니다.",
-               response_model=dict
+               response_model=MessageResponse
                )
 async def delete_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)

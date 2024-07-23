@@ -62,7 +62,8 @@ async def get_test_access_token(db: Session = Depends(get_db)):
 
 @router.get("/token",
             description="발급된 access-token에서 사용자 정보를 반환합니다.",
-            response_model=ResponseDecodeToken)
+            response_model=ResponseDecodeToken
+            )
 async def get_user_info_from_token(authorization: str = Depends(api_key_header)):
     try:
         payload = auth_service.decode_token(authorization)

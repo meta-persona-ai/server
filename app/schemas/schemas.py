@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from enum import Enum
 
 class GenderEnum(str, Enum):
@@ -14,3 +14,11 @@ class CharacterSchema(BaseModel):
     character_personality: str | None = None
     character_details: str | None = None
     user_id: int | None = None
+
+class User(BaseModel):
+    user_id: int
+    user_email: str
+    user_name: str
+    user_profile: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
