@@ -42,7 +42,7 @@ def db_session():
 def test_create_chat(db_session: Session):
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     test_character = db_session.query(Character).first()
@@ -54,7 +54,7 @@ def test_create_chat(db_session: Session):
 def test_get_my_chat(db_session: Session):
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
@@ -66,7 +66,7 @@ def test_get_my_chat(db_session: Session):
 def test_delete_chat(db_session: Session):
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 

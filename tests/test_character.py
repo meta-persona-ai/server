@@ -41,7 +41,7 @@ def test_create_character(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
@@ -77,7 +77,7 @@ def test_get_my_characters(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
@@ -93,7 +93,7 @@ def test_update_character(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
@@ -112,7 +112,7 @@ def test_delete_character(db_session: Session):
     """
     response = client.post("/api/auth/token/test")
     assert response.status_code == 200
-    test_token = response.json().get("jwt_token")
+    test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
