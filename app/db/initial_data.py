@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 
-from . import database
-from ..schemas import user_schema, chat_schema, schemas
-from ..schemas.request import character_request_schema
+from ..schemas import user_schema, schemas
+from ..schemas.request import chat_request_schema
 from ..crud import auth_crud, user_crud, character_crud, chat_crud
 
 class DatabaseInitializer:
@@ -52,7 +51,7 @@ class DatabaseInitializer:
         init_user = user_crud.get_user_by_email(self.test_email, db)
         init_character = character_crud.get_characters_by_name(self.character_name, db)
 
-        chat = chat_schema.ChatCreate(
+        chat = chat_request_schema.ChatCreate(
             user_id=init_user.user_id,
             character_id=init_character.character_id
         )

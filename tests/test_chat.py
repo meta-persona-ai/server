@@ -49,7 +49,8 @@ def test_create_chat(db_session: Session):
     
     response = client.post(f"/api/chat?character_id={test_character.character_id}", headers=headers)
     assert response.status_code == 200
-    assert "chat_id" in response.json()
+    data = response.json()
+    assert data["message"] == "Chat created successfully"
 
 def test_get_my_chat(db_session: Session):
     response = client.post("/api/auth/token/test")
@@ -77,4 +78,4 @@ def test_delete_chat(db_session: Session):
     response = client.delete(f"/api/chat/{test_chat.character_id}", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    assert data['message'] == 'Character deleted successfully'
+    assert data['message'] == 'Chat deleted successfully'

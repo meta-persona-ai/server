@@ -17,7 +17,7 @@ api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
             description="새 캐릭터를 생성하는 API입니다.",
-            response_model=dict
+            response_model=MessageResponse
             )
 async def create_character(character: CharacterCreate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
