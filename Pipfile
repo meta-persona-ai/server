@@ -17,6 +17,7 @@ pymysql = "*"
 pytz = "*"
 pyhumps = "*"
 fastapi-camelcase = "*"
+boto3 = "*"
 
 [dev-packages]
 pytest = "*"
