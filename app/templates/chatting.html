@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <form action="" onsubmit="createRoom(event)">
+        <input type="text" id="roomName" autocomplete="off" placeholder="Room Name"/>
+        <button>Create/Join Room</button>
+    </form>
+    <form action="" onsubmit="sendMessage(event)">
+        <input type="text" id="messageText" autocomplete="off" />
+        <button>Send</button>
+    </form>
+    <ul id='messages'></ul>
+    <script>
+        var ws;
+        var currentMessages = {};  // 현재 메시지 저장용 객체
+
+        function createRoom(event) {
+            var roomName = document.getElementById("roomName").value;
+            ws = new WebSocket("ws://" + window.location.host + "/api/chatting/ws/" + roomName);
+            ws.onmessage = function (event) {
+                var messages = document.getElementById('messages');
+                var data = JSON.parse(event.data);
+
+                if (data.character) {
+                    if (!currentMessages[data.response_id]) {
+                        var message = document.createElement('li');
+                        message.id = 'message-' + data.response_id;
+                        currentMessages[data.response_id] = message;
+                        messages.appendChild(message);
+                    }
+                    currentMessages[data.response_id].textContent += data.character;
+                } else if (data.message) {
+                    var infoMessage = document.createElement('li');
+                    infoMessage.textContent = data.message;
+                    messages.appendChild(infoMessage);
+                }
+            };
+            event.preventDefault();
+        }
+
+        function sendMessage(event) {
+            var input = document.getElementById("messageText");
+            ws.send(input.value);
+            input.value = '';
+            event.preventDefault();
+        }
+    </script>
+</body>
+</html>
