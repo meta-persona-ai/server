@@ -1,5 +1,8 @@
 from typing import List
 from fastapi import WebSocket
+import json
+
+from app.schemas.chatting_schema import AuthMessage, SystemMessage
 
 class ConnectionManager:
     def __init__(self):
@@ -16,6 +19,11 @@ class ConnectionManager:
     async def broadcast(self, message: str):
         for connection in self.active_connections:
             await connection.send_text(message)
+    
+    async def broadcast_system_message(self, message: str):
+        system_message = SystemMessage(type="system", message=message).model_dump_json()
+        for connection in self.active_connections:
+            await connection.send_text(system_message)
 
     def has_connections(self) -> bool:
         return len(self.active_connections) > 0

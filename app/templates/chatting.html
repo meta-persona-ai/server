@@ -32,6 +32,7 @@
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages');
                 var data = JSON.parse(event.data);
+                console.log(data);
 
                 if (data.character) {
                     if (!currentMessages[data.response_id]) {
@@ -64,7 +65,11 @@
 
         function sendMessage(event) {
             var input = document.getElementById("messageText");
-            ws.send(input.value);
+            var messageData = {
+                type: "chat",
+                message: input.value
+            };
+            ws.send(JSON.stringify(messageData));
             input.value = '';
             event.preventDefault();
         }
