@@ -16,6 +16,7 @@ class DatabaseInitializer:
         self._make_init_user(db)
         self._make_init_character(db)
         self._make_init_chat(db)
+        self._make_init_chat(db)
 
         db.close()
 

@@ -13,6 +13,12 @@ load_dotenv()
 JWT_SECRET = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
 
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
 class TokenData(BaseModel):
     id: int
     email: str
@@ -35,11 +41,6 @@ def decode_token(authorization: str) -> UserSchema:
 
 
 def verify_token(token: str):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         token = token.split(" ")[1]  # "Bearer " 부분을 제거
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])

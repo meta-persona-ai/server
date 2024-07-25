@@ -1,8 +1,10 @@
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Depends
 from fastapi.security import APIKeyHeader
 from fastapi.responses import HTMLResponse
+from sqlalchemy.orm import Session
 import os
 
+from ...db.database import get_db
 from app.services import chatting_service
 
 
@@ -23,5 +25,5 @@ async def serve_homepage():
 
 
 @router.websocket("/ws/{room_name}")
-async def websocket_endpoint(websocket: WebSocket, room_name: str):
-    await chatting_service.chatting(websocket, room_name)
+async def websocket_endpoint(websocket: WebSocket, room_name: str, db: Session = Depends(get_db)):
+    await chatting_service.chatting(websocket, room_name, db)
