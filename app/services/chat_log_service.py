@@ -16,7 +16,7 @@ async def echo_message2(room: ConnectionManager, data: str, response_id: int):
     for char in data:
         json_message = json.dumps({"response_id": response_id, "character": char})
         await room.broadcast(json_message)
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(0.1)
 
 async def send_time(websocket: WebSocket):
     while True:

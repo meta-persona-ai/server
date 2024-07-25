@@ -7,6 +7,7 @@
     <h1>WebSocket Chat</h1>
     <form action="" onsubmit="createRoom(event)">
         <input type="text" id="roomName" autocomplete="off" placeholder="Room Name"/>
+        <input type="text" id="token" autocomplete="off" placeholder="Token"/> <!-- 토큰 입력 필드 추가 -->
         <button>Create/Join Room</button>
     </form>
     <form action="" onsubmit="sendMessage(event)">
@@ -20,8 +21,15 @@
 
         function createRoom(event) {
             var roomName = document.getElementById("roomName").value;
+            var token = document.getElementById("token").value;  // 토큰 값 가져오기
             ws = new WebSocket("ws://" + window.location.host + "/api/chatting/ws/" + roomName);
-            ws.onmessage = function (event) {
+            
+            // 초기 핸드셰이크에서 Authorization 헤더를 설정
+            ws.onopen = function() {
+                ws.send(JSON.stringify({ type: "auth", token: "Bearer " + token }));
+            };
+
+            ws.onmessage = function(event) {
                 var messages = document.getElementById('messages');
                 var data = JSON.parse(event.data);
 
