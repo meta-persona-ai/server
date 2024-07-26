@@ -75,11 +75,11 @@ async def insert_bot_message(chat_log: ChatLogCreate, response_message: str, db:
         response_message (str): 생성된 봇 응답 메시지.
         db (Session): 데이터베이스 세션 객체.
     """
-    chat_log.rool = "character"
+    chat_log.role = "character"
     chat_log.contents = response_message
     chat_log_service.create_chat_log(chat_log, db)
 
-async def log_insert_data(chat_id: int, user_id: int, character_id: int, rool: str, contents: str) -> ChatLogCreate:
+async def log_insert_data(chat_id: int, user_id: int, character_id: int, role: str, contents: str) -> ChatLogCreate:
     """
     로그 데이터를 생성합니다.
 
@@ -87,7 +87,7 @@ async def log_insert_data(chat_id: int, user_id: int, character_id: int, rool: s
         chat_id (int): 채팅 ID.
         user_id (int): 사용자 ID.
         character_id (int): 캐릭터 ID.
-        rool (str): 메시지의 역할 (사용자 또는 캐릭터).
+        role (str): 메시지의 역할 (사용자 또는 캐릭터).
         contents (str): 메시지 내용.
 
     Returns:
@@ -97,6 +97,6 @@ async def log_insert_data(chat_id: int, user_id: int, character_id: int, rool: s
         chat_id=chat_id,
         user_id=user_id,
         character_id=character_id,
-        rool=rool,
+        role=role,
         contents=contents
     )
