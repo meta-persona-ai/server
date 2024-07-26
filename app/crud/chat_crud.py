@@ -19,6 +19,9 @@ def create_chat(chat: ChatCreate, db: Session):
 def get_chats_by_user_id(user_id: int, db: Session) -> list[Chat]:
     return db.query(Chat).filter(Chat.user_id == user_id).all()
 
+def get_chats_by_chat_id_and_user_id(chat_id: int, user_id: int, db: Session) -> Chat:
+    return db.query(Chat).filter(Chat.chat_id == chat_id, Chat.user_id == user_id).first()
+
 # delete
 def delete_chat_by_id(chat_id: int, user_id: int, db: Session) -> bool:
     user_to_delete = db.query(Chat).filter(

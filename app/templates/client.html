@@ -15,19 +15,33 @@
     <ul id='messages'>
     </ul>
     <script>
-        var ws = new WebSocket("ws://122.128.54.136:7070/api/chat_log/ws");
+        var ws = new WebSocket("ws://localhost:8000/api/chatting/ws");
+        var currentMessages = {};  // 현재 메시지 저장용 객체
+
         ws.onmessage = function (event) {
-            var messages = document.getElementById('messages')
-            var message = document.createElement('li')
-            var content = document.createTextNode(event.data)
-            message.appendChild(content)
-            messages.appendChild(message)
+            var messages = document.getElementById('messages');
+            var data = JSON.parse(event.data);
+
+            if (data.character) {
+                if (!currentMessages[data.response_id]) {
+                    var message = document.createElement('li');
+                    message.id = 'message-' + data.response_id;
+                    currentMessages[data.response_id] = message;
+                    messages.appendChild(message);
+                }
+                currentMessages[data.response_id].textContent += data.character;
+            } else if (data.time) {
+                var timeMessage = document.createElement('li');
+                timeMessage.textContent = data.time;
+                messages.appendChild(timeMessage);
+            }
         };
+
         function sendMessage(event) {
-            var input = document.getElementById("messageText")
-            ws.send(input.value)
-            input.value = ''
-            event.preventDefault()
+            var input = document.getElementById("messageText");
+            ws.send(input.value);
+            input.value = '';
+            event.preventDefault();
         }
     </script>
 </body>

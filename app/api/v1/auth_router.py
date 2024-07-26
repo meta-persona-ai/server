@@ -14,7 +14,7 @@ logger = setup_logger()
 api_key_header = APIKeyHeader(name="Authorization")
 
 router = APIRouter(
-    prefix="/api/auth",
+    prefix="/api/v1/auth",
     tags=["Auth"]
 )
 
