@@ -111,7 +111,7 @@ async def handle_messages(websocket: WebSocket, room: ConnectionManager, chat_id
     while True:
         data = await websocket.receive_text()
         user_message = UserMessage(**json.loads(data))
-        chat_log = await log_insert_data(chat_id, user.user_id, character_schema.character_id, rool="user", contents=user_message.message)
+        chat_log = await log_insert_data(chat_id, user.user_id, character_schema.character_id, rool=user_message.type, contents=user_message.message)
         response_id = room.get_next_response_id()
         asyncio.create_task(echo_message(room, chat_log, character_schema, response_id, db=db))
 

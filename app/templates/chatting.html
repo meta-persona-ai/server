@@ -25,7 +25,7 @@
 
         // 페이지 로드 시 토큰을 받아오는 함수
         window.onload = function() {
-            fetch('/api/auth/token/test', {
+            fetch('/api/v1/auth/token/test', {
                 method: 'POST',
             })
                 .then(response => response.json())
@@ -41,7 +41,7 @@
 
         function createRoom(event) {
             var roomName = document.getElementById("roomName").value;
-            ws = new WebSocket("ws://" + window.location.host + "/api/chatting/ws/" + roomName);
+            ws = new WebSocket("ws://" + window.location.host + "/api/v1/chatting/ws/" + roomName);
 
             // 초기 핸드셰이크에서 Authorization 헤더를 설정
             ws.onopen = function() {
@@ -88,7 +88,7 @@
         function sendMessage(event) {
             var input = document.getElementById("messageText");
             var messageData = {
-                type: "chat",
+                type: "user",
                 message: input.value
             };
             ws.send(JSON.stringify(messageData));

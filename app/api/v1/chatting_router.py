@@ -9,19 +9,10 @@ from app.services import chatting_service
 
 
 router = APIRouter(
-    prefix="/api/chatting",
+    prefix="/api/v1/chatting",
     tags=["Chatting"]
 )
 api_key_header = APIKeyHeader(name="Authorization")
-
-
-@router.get("/", response_class=HTMLResponse)
-async def serve_homepage():
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    file_path = os.path.join(project_root, "app", "templates", "chatting.html")
-    with open(file_path, "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
 
 
 @router.websocket("/ws/{chat_id}")

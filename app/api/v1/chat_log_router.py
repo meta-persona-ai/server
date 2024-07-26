@@ -9,7 +9,7 @@ from app.services import chat_log_service
 
 
 router = APIRouter(
-    prefix="/api/chat-log",
+    prefix="/api/v1/chat-log",
     tags=["Chat log"]
 )
 api_key_header = APIKeyHeader(name="Authorization")

@@ -10,7 +10,7 @@ from app.schemas.response.character_response_schema import CharacterResponse, Me
 from ...services import character_service
 
 router = APIRouter(
-    prefix="/api/characters",
+    prefix="/api/v1/characters",
     tags=["Characters"]
 )
 api_key_header = APIKeyHeader(name="Authorization")
