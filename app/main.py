@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     database.drop_tables()
     database.create_tables()
 
-    initializer = DatabaseInitializer(database.engine)
+    initializer = DatabaseInitializer(database.engine, data_file='app/resources/init_data.yaml')
     initializer.init_db()
 
     yield

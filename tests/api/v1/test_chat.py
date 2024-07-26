@@ -1,19 +1,15 @@
-from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
-
-from app.main import app
-from app.db.database import get_db
+import pytest
+from sqlalchemy.orm import Session
 from app.models.character import Character
 from app.models.chat import Chat
 
-from tests.db.database import override_get_db, db_session
+@pytest.fixture
+def client(client: TestClient) -> TestClient:
+    return client
 
 
-client = TestClient(app)
-app.dependency_overrides[get_db] = override_get_db
-
-
-def test_create_chat(db_session: Session):
+def test_create_chat(client: TestClient, db_session: Session):
     response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
@@ -26,7 +22,7 @@ def test_create_chat(db_session: Session):
     data = response.json()
     assert data["message"] == "Chat created successfully"
 
-def test_get_my_chat(db_session: Session):
+def test_get_my_chats(client: TestClient):
     response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
@@ -38,7 +34,7 @@ def test_get_my_chat(db_session: Session):
     data = response.json()
     assert len(data) > 0
 
-def test_delete_chat(db_session: Session):
+def test_delete_chat(client: TestClient, db_session: Session):
     response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")

@@ -1,0 +1,39 @@
+users:
+  - email: "test@example.com"
+    password: "test"
+    name: "Test User"
+    profile: "test.jpg"
+  - email: "another@example.com"
+    password: "another"
+    name: "Another User"
+    profile: "another.jpg"
+
+characters:
+  - name: "init character"
+    gender: "male"
+    profile: "init profile"
+    personality: "init personality"
+    details: "init details"
+    user_email: "test@example.com"
+
+chats:
+  - user_email: "test@example.com"
+    character_name: "init character"
+
+chat_logs:
+  - user_email: "test@example.com"
+    character_name: "init character"
+    role: "user"
+    contents: "test user input"
+  - user_email: "test@example.com"
+    character_name: "init character"
+    role: "character"
+    contents: "test character output"
+  - user_email: "test@example.com"
+    character_name: "init character"
+    role: "user"
+    contents: "test user input2"
+  - user_email: "test@example.com"
+    character_name: "init character"
+    role: "character"
+    contents: "test character output2"

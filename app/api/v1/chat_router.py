@@ -30,6 +30,7 @@ async def create_chat(character_id: int, authorization: str = Depends(api_key_he
 
 @router.get("/me",
             description="인증된 사용자의 모든 채팅방를 조회하는 API입니다.",
+            response_model=list[ChatResponse]
             )
 async def get_my_chat(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
