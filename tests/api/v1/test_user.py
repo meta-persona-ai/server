@@ -44,7 +44,7 @@ def test_read_users(db_session: Session):
     모든 사용자 조회 테스트.
     이 테스트는 /api/user/ 엔드포인트를 호출하여 모든 사용자를 조회하는지 확인합니다.
     """
-    response = client.get(f"/api/user/")
+    response = client.get(f"/api/v1/user/")
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
@@ -55,13 +55,13 @@ def test_read_current_user(db_session: Session):
     현재 로그인한 사용자 정보 조회 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 조회하는지 확인합니다.
     """
-    response = client.post("/api/auth/token/test")
+    response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
-    response = client.get(f"/api/user/me", headers=headers)
+    response = client.get(f"/api/v1/user/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["userName"] == "Test User"
@@ -72,14 +72,14 @@ def test_update_current_user(db_session: Session):
     현재 로그인한 사용자 정보 업데이트 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 업데이트하는지 확인합니다.
     """
-    response = client.post("/api/auth/token/test")
+    response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
     response = client.put(
-        f"/api/user/me",
+        f"/api/v1/user/me",
         json={"userName": "Updated User"},
         headers=headers
     )
@@ -92,13 +92,13 @@ def test_deactivate_user(db_session: Session):
     사용자 비활성화 테스트.
     이 테스트는 /api/user/me/deactivate 엔드포인트를 호출하여 현재 로그인한 사용자를 비활성화하는지 확인합니다.
     """
-    response = client.post("/api/auth/token/test")
+    response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
-    response = client.put(f"/api/user/me/deactivate", headers=headers)
+    response = client.put(f"/api/v1/user/me/deactivate", headers=headers)
     assert response.status_code == 200
 
     test_user = db_session.query(User).filter(User.user_email == "test@example.com").first()
