@@ -1,25 +1,27 @@
-from fastapi import WebSocket
-import asyncio
-from datetime import datetime
-import json
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
-from app.utils.socket_connection_manager import ConnectionManager
+from ..crud import chat_log_crud
+from ..schemas.request.chat_log_request_schema import ChatLogCreate
 
 
-async def echo_message(websocket: WebSocket, data: str, response_id: int):
-    for char in data:
-        json_message = json.dumps({"response_id": response_id, "character": char})
-        await websocket.send_text(json_message)
-        await asyncio.sleep(1)
+# insert
+def create_chat_log(log: ChatLogCreate, db: Session):
+    return chat_log_crud.create_chat_log(log, db)
 
-async def echo_message2(room: ConnectionManager, data: str, response_id: int):
-    for char in data:
-        json_message = json.dumps({"response_id": response_id, "character": char})
-        await room.broadcast(json_message)
-        await asyncio.sleep(0.3)
+# select
+def get_chat_logs_by_user_id(chat_id: int, user_id: int, db: Session):
+    chat_logs = chat_log_crud.get_chat_logs_by_user_id(chat_id, user_id, db)
+    if not chat_logs:
+        raise HTTPException(status_code=404, detail="Chat logs not found")
+    return chat_logs
 
-async def send_time(websocket: WebSocket):
-    while True:
-        await asyncio.sleep(5)
-        json_message = json.dumps({"time": datetime.utcnow().isoformat()})
-        await websocket.send_text(json_message)
+# def get_chats_by_chat_id_and_user_id(chat_id: int, user_id: int, db: Session) -> Chat:
+#     return chat_crud.get_chats_by_chat_id_and_user_id(chat_id, user_id, db)
+
+# # delete
+# def delete_chat_by_id(chat_id: int, user_id: int, db: Session) -> bool:
+#     success = chat_crud.delete_chat_by_id(chat_id, user_id, db)
+#     if not success:
+#         raise HTTPException(status_code=404, detail="Chat not found or not authorized to delete")
+#     return success

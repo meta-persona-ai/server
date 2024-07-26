@@ -5,25 +5,53 @@
 </head>
 <body>
     <h1>WebSocket Chat</h1>
+    <div id="tokenContainer">
+        <p>Token: <span id="tokenDisplay">Fetching...</span></p>
+    </div>
     <form action="" onsubmit="createRoom(event)">
         <input type="text" id="roomName" autocomplete="off" placeholder="Room Name"/>
         <button>Create/Join Room</button>
     </form>
     <form action="" onsubmit="sendMessage(event)">
-        <input type="text" id="messageText" autocomplete="off" />
+        <input type="text" id="messageText" autocomplete="off" placeholder="Type a message"/>
         <button>Send</button>
     </form>
+    <button onclick="leaveRoom()">Leave Room</button>
     <ul id='messages'></ul>
     <script>
         var ws;
-        var currentMessages = {};  // 현재 메시지 저장용 객체
+        var currentMessages = {};
+        var token = '';
+
+        // 페이지 로드 시 토큰을 받아오는 함수
+        window.onload = function() {
+            fetch('/api/auth/token/test', {
+                method: 'POST',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    token = data.jwtToken;
+                    document.getElementById('tokenDisplay').textContent = token;  // 화면에 토큰 출력
+                })
+                .catch(error => {
+                    console.error('Error fetching token:', error);
+                    document.getElementById('tokenDisplay').textContent = 'Error fetching token';
+                });
+        };
 
         function createRoom(event) {
             var roomName = document.getElementById("roomName").value;
             ws = new WebSocket("ws://" + window.location.host + "/api/chatting/ws/" + roomName);
-            ws.onmessage = function (event) {
+
+            // 초기 핸드셰이크에서 Authorization 헤더를 설정
+            ws.onopen = function() {
+                ws.send(JSON.stringify({ type: "auth", token: "Bearer " + token }));
+            };
+
+            ws.onmessage = function(event) {
                 var messages = document.getElementById('messages');
                 var data = JSON.parse(event.data);
+                console.log(data);
 
                 if (data.character) {
                     if (!currentMessages[data.response_id]) {
@@ -39,14 +67,48 @@
                     messages.appendChild(infoMessage);
                 }
             };
+
+            ws.onclose = function(event) {
+                var messages = document.getElementById('messages');
+                var closeMessage = document.createElement('li');
+                closeMessage.textContent = 'Connection closed: ' + event.reason;
+                messages.appendChild(closeMessage);
+                clearMessages();  // 연결이 닫힐 때 메시지 목록을 지움
+
+                alert('Connection closed: ' + event.reason);  // 연결이 닫힐 때 이유를 알림
+            };
+
+            ws.onerror = function(event) {
+                console.error('WebSocket error observed:', event);
+            };
+
             event.preventDefault();
         }
 
         function sendMessage(event) {
             var input = document.getElementById("messageText");
-            ws.send(input.value);
+            var messageData = {
+                type: "chat",
+                message: input.value
+            };
+            ws.send(JSON.stringify(messageData));
             input.value = '';
             event.preventDefault();
+        }
+
+        function leaveRoom() {
+            if (ws) {
+                ws.close();
+                ws = null;
+                alert('You have left the room.');
+                clearMessages();  // 채팅방을 나갈 때 메시지 목록을 지움
+            }
+        }
+
+        function clearMessages() {
+            var messages = document.getElementById('messages');
+            messages.innerHTML = '';
+            currentMessages = {};
         }
     </script>
 </body>
