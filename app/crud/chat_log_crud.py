@@ -10,7 +10,7 @@ def create_chat_log(log: ChatLogCreate, db: Session) -> ChatLog:
         chat_id=log.chat_id,
         user_id=log.user_id,
         character_id=log.character_id,
-        rool=log.rool,
+        role=log.role,
         contents=log.contents
     )
     db.add(db_log)

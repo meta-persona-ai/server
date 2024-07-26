@@ -17,7 +17,7 @@ class ChatLog(Base):
     chat_id = Column(Integer, ForeignKey('chats.chat_id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=True)
     character_id = Column(Integer, ForeignKey('characters.character_id'), nullable=True)
-    rool = Column(Enum(ChatTypeEnum), nullable=False)
+    role = Column(Enum(ChatTypeEnum), nullable=False)
     log_create_at = Column(DateTime(timezone=True), server_default=func.now())
     contents = Column(Text, nullable=True)
 
