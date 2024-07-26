@@ -13,6 +13,7 @@ class CharacterCreate(CamelModel):
     character_personality: str | None = None
     character_details: str | None = None
     character_is_public: bool
+    relationships: list[int] = []
 
 class CharacterUpdate(CamelModel):
     character_name: str | None = None

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from ..models.character import Character
+from ..models.character_relationship import CharacterRelationship
 from ..schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
 
 # insert
@@ -18,6 +19,16 @@ def create_character(character: CharacterCreate, user_id:int, db: Session) -> Ch
             user_id=user_id
         )
         db.add(db_character)
+        db.commit()
+        db.refresh(db_character)
+
+        # relationships 처리
+        for relationship_id in character.relationships:
+            character_relationship = CharacterRelationship(
+                character_id=db_character.character_id,
+                relationship_id=relationship_id
+            )
+            db.add(character_relationship)
         db.commit()
         db.refresh(db_character)
         return db_character

@@ -8,7 +8,7 @@ from app.models.character import Character
 def client(client: TestClient) -> TestClient:
     return client
 
-def test_create_character(client: TestClient):
+def test_create_character(client: TestClient, db_session: Session):
     """
     캐릭터 생성 테스트.
     이 테스트는 /api/characters 엔드포인트를 호출하여 새로운 캐릭터를 생성하는지 확인합니다.
@@ -25,13 +25,22 @@ def test_create_character(client: TestClient):
         "characterGender": "male",
         "characterPersonality": "Test personality",
         "characterDetails": "Test details",
-        "characterIsPublic": True
+        "characterIsPublic": True,
+        "relationships": [1,2]
     }
     
     response = client.post("/api/v1/characters", json=exam_character, headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data['message'] == 'Character created successfully'
+    character_id = data['characterId']
+
+    response = client.get(f"/api/v1/characters/{character_id}")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert [r['relationship']['relationshipId'] for r in data['characterRelationships']] == [1,2]
+
 
 def test_get_all_characters(client):
     """

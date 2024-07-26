@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.utils import jwt_util
 from app.schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
-from app.schemas.response.character_response_schema import CharacterResponse, MessageResponse
+from app.schemas.response.character_response_schema import CharacterResponse, CharacterCreateResponse, MessageResponse
 
 from ...services import character_service
 
@@ -17,12 +17,12 @@ api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
             description="새 캐릭터를 생성하는 API입니다.",
-            response_model=MessageResponse
+            response_model=CharacterCreateResponse
             )
 async def create_character(character: CharacterCreate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
     payload = jwt_util.decode_token(authorization)
-    success = character_service.create_character(character, payload.id, db)
-    return {"message": "Character created successfully"} if success else {"message": "Character creation failed"}
+    character = character_service.create_character(character, payload.id, db)
+    return {"character_id": character.character_id, "message": "Character created successfully"}
 
 @router.get("/",
             description="모든 캐릭터를 조회하는 API입니다.",
