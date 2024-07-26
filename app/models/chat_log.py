@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger, Sequence
 from datetime import datetime, timezone
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import relationship
@@ -14,7 +14,7 @@ class ChatTypeEnum(enum.Enum):
 class ChatLog(Base):
     __tablename__ = "chat_logs"
 
-    log_id = Column(BigInteger, primary_key=True)
+    log_id = Column(BigInteger, Sequence('log_id_seq'), primary_key=True, autoincrement=True)
     chat_id = Column(Integer, ForeignKey('chats.chat_id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=True)
     character_id = Column(Integer, ForeignKey('characters.character_id'), nullable=True)

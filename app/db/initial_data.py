@@ -14,6 +14,7 @@ class DatabaseInitializer:
         db = Session(bind=self.engine)
 
         data = self._load_data()
+
         self._init_users(db, data['users'])
         self._init_characters(db, data['characters'])
         self._init_chats(db, data['chats'])
