@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 import os
 
-from ...db.database import get_db
+from app.db.database import get_db
 from app.services import chatting_service
 
 
@@ -24,6 +24,6 @@ async def serve_homepage():
     return HTMLResponse(content=html_content)
 
 
-@router.websocket("/ws/{room_name}")
-async def websocket_endpoint(websocket: WebSocket, room_name: str, db: Session = Depends(get_db)):
-    await chatting_service.chatting(websocket, room_name, db)
+@router.websocket("/ws/{chat_id}")
+async def websocket_endpoint(websocket: WebSocket, chat_id: str, db: Session = Depends(get_db)):
+    await chatting_service.chatting(websocket, chat_id, db)

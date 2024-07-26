@@ -40,7 +40,7 @@ def decode_token(authorization: str) -> UserSchema:
     return payload
 
 
-def verify_token(token: str):
+def verify_token(token: str) -> TokenData:
     try:
         token = token.split(" ")[1]  # "Bearer " 부분을 제거
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
