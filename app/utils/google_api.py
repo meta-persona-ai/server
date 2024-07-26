@@ -8,7 +8,7 @@ from datetime import datetime
 import pytz
 
 from ..core.logger_config import setup_logger
-from ..schemas.user_schema import UserCreate
+from ..schemas.request.user_request_schema import UserCreate
 
 load_dotenv()
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 from ..models.user import User
-from app.schemas.user_schema import UserSchema
+from app.schemas.schemas import UserSchema
 from pydantic import BaseModel
 
 

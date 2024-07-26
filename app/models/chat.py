@@ -15,7 +15,3 @@ class Chat(Base):
     user = relationship("User", back_populates="chats", lazy='selectin')
     character = relationship("Character", back_populates="chats", lazy='selectin')
     chat_logs = relationship("ChatLog", back_populates="chat", lazy='selectin', cascade="all, delete-orphan")
-
-from .user import User
-from .character import Character
-from .chat_log import ChatLog
