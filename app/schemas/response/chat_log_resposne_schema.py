@@ -1,4 +1,5 @@
 from fastapi_camelcase import CamelModel
+from datetime import datetime
 from enum import Enum
 
 
@@ -12,8 +13,7 @@ class ChatLogResponse(CamelModel):
     user_id: int
     character_id: int
     role: ChatLogRoolEnum
-    
-    # log_create_at = Column(DATETIME(fsp=3), default=lambda: datetime.now(timezone.utc))
+    log_create_at: datetime
 
 class MessageResponse(CamelModel):
     message: str

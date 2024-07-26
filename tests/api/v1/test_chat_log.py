@@ -16,26 +16,35 @@ def test_get_my_chat(client: TestClient):
     response = client.get(f"/api/v1/chat/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    print(data[0])
 
-    # response = client.get(f"/api/v1/chat-log/me/{chat_id}", headers=headers)
-    # assert response.status_code == 200
-    # data = response.json()
-    # assert len(data) > 0
-    assert False
+    response = client.get(f"/api/v1/chat-log/me/{data[0]['chatId']}", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) > 0
 
-# def test_delete_chat(client: TestClient, db_session: Session):
-#     response = client.post("/api/v1/auth/token/test")
-#     assert response.status_code == 200
-#     test_token = response.json().get("jwtToken")
+def test_delete_chat(client: TestClient):
+    response = client.post("/api/v1/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwtToken")
 
-#     headers = {"Authorization": f"Bearer {test_token}"}
+    headers = {"Authorization": f"Bearer {test_token}"}
 
-#     user_info = client.get("/api/v1/auth/token", headers=headers).json()
+    response = client.get(f"/api/v1/chat/me", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    chat_id = data[0]['chatId']
 
-#     test_chat = db_session.query(Chat).filter(Chat.user_id == user_info['id']).first()
-    
-#     response = client.delete(f"/api/v1/chat/{test_chat.character_id}", headers=headers)
-#     assert response.status_code == 200
-#     data = response.json()
-#     assert data['message'] == 'Chat deleted successfully'
+    response = client.get(f"/api/v1/chat-log/me/{chat_id}", headers=headers)
+    assert response.status_code == 200
+    before = len(response.json())
+
+    response = client.delete(f"/api/v1/chat-log/{chat_id}", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['message'] == 'Log deleted successfully'
+
+    response = client.get(f"/api/v1/chat-log/me/{chat_id}", headers=headers)
+    assert response.status_code == 200
+    after = len(response.json())
+
+    assert before == after + 1

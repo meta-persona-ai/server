@@ -16,7 +16,6 @@ class Chat(Base):
     character = relationship("Character", back_populates="chats", lazy='selectin')
     chat_logs = relationship("ChatLog", back_populates="chat", lazy='selectin', cascade="all, delete-orphan")
 
-# 지연 임포트
 from .user import User
 from .character import Character
 from .chat_log import ChatLog
