@@ -1,8 +1,8 @@
 import yaml
 from sqlalchemy.orm import Session
 
-from ..schemas import schemas
-from ..schemas.request import chat_request_schema, chat_log_request_schema, user_request_schema, relationship_request_schema
+# from ..schemas import schemas
+from ..schemas.request import chat_request_schema, chat_log_request_schema, user_request_schema, relationship_request_schema, character_request_schema
 from ..crud import auth_crud, user_crud, character_crud, chat_crud, chat_log_crud, relationship_crud
 
 class DatabaseInitializer:
@@ -54,18 +54,18 @@ class DatabaseInitializer:
         for char_data in characters:
             init_user = user_crud.get_user_by_email(char_data['user_email'], db)
 
-            character = schemas.CharacterSchema(
+            character = character_request_schema.CharacterCreate(
                 character_name=char_data['name'],
-                character_gender=char_data['gender'],
                 character_profile=char_data['profile'],
+                character_gender=char_data['gender'],
                 character_personality=char_data['personality'],
                 character_details=char_data['details'],
-                user_id=init_user.user_id
+                character_is_public=True
             )
 
             existing_character = character_crud.get_characters_by_name(char_data['name'], db)
             if not existing_character:
-                character_crud.create_character(character, db)
+                character_crud.create_character(character, init_user.user_id, db)
 
     def _init_chats(self, db: Session, chats):
         for chat_data in chats:

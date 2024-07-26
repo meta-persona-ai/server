@@ -1,5 +1,8 @@
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 import pytest
+
+from app.models.character import Character
 
 @pytest.fixture
 def client(client: TestClient) -> TestClient:
@@ -17,11 +20,12 @@ def test_create_character(client: TestClient):
     headers = {"Authorization": f"Bearer {test_token}"}
 
     exam_character = {
-        "characterDetails": "Test details",
-        "characterGender": "male",
         "characterName": "test",
+        "characterProfile": "Test profile",
+        "characterGender": "male",
         "characterPersonality": "Test personality",
-        "characterProfile": "Test profile"
+        "characterDetails": "Test details",
+        "characterIsPublic": True
     }
     
     response = client.post("/api/v1/characters", json=exam_character, headers=headers)
@@ -39,6 +43,16 @@ def test_get_all_characters(client):
     data = response.json()
     assert len(data) > 0
 
+def test_get_character(client):
+    response = client.get("/api/v1/characters/")
+    assert response.status_code == 200
+    character_id = response.json()[0]['characterId']
+
+    response = client.get(f"/api/v1/characters/{character_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data['characterId'] == character_id
+
 def test_get_my_characters(client: TestClient):
     """
     로그인한 사용자의 캐릭터 조회 테스트.
@@ -50,7 +64,7 @@ def test_get_my_characters(client: TestClient):
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
-    response = client.get("/api/v1/characters/me", headers=headers)
+    response = client.get("/api/v1/characters/my/characters", headers=headers)
     print(response.json())
     assert response.status_code == 200
     data = response.json()
@@ -74,3 +88,54 @@ def test_update_character(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Character updated successfully"
+
+def test_update_character_is_public(client: TestClient, db_session: Session):
+    response = client.get("/api/v1/characters/")
+    assert response.status_code == 200
+    character_id = response.json()[0]['characterId']
+
+    response = client.post("/api/v1/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwtToken")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+
+    updata_data = {
+        "characterName": "Updated Character",
+        "characterDetails": "Updata characterIsPublic",
+        "characterIsPublic": False
+    }
+    
+    response = client.put(
+        f"/api/v1/characters/{character_id}", 
+        json=updata_data,
+        headers=headers
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Character updated successfully"
+
+    updated_character = db_session.query(Character).filter(Character.character_id == character_id).first()
+    assert updated_character.character_is_public == False
+
+def test_update_character_deactivate(client: TestClient, db_session: Session):
+    response = client.get("/api/v1/characters/")
+    assert response.status_code == 200
+    character_id = response.json()[0]['characterId']
+
+    response = client.post("/api/v1/auth/token/test")
+    assert response.status_code == 200
+    test_token = response.json().get("jwtToken")
+
+    headers = {"Authorization": f"Bearer {test_token}"}
+    
+    response = client.put(
+        f"/api/v1/characters/{character_id}/deactivate", 
+        headers=headers
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Character deactivated successfully"
+
+    updated_character = db_session.query(Character).filter(Character.character_id == character_id).first()
+    assert updated_character.character_is_active == False

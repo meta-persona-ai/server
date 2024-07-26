@@ -10,15 +10,17 @@ from ..crud import character_crud
 
 # insert
 def create_character(character_create: CharacterCreate, user_id: int, db: Session):
-    character = converters.convert_create_to_schema(character_create, user_id)
-    return character_crud.create_character(character, db)
+    return character_crud.create_character(character_create, user_id, db)
 
 # select
 def get_all_characters(db: Session) -> list[Character]:
     return character_crud.get_all_characters(db)
 
+def get_character(character_id: int, db: Session) -> Character:
+    return character_crud.get_character(character_id, db)
+
 def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
-    characters = character_crud.get_characters_by_id(user_id, db)
+    characters = character_crud.get_characters_by_user_id(user_id, db)
     if not characters:
         raise HTTPException(status_code=404, detail="Characters not found")
     return characters
@@ -36,3 +38,10 @@ def delete_character_by_id(character_id: int, user_id: int, db: Session) -> bool
     if not success:
         raise HTTPException(status_code=404, detail="Character not found or not authorized to delete")
     return success
+
+# deactivate
+def deactivate_character_by_id(character_id: int, user_id: int, db: Session) -> Character:
+    updated_character = character_crud.deactivate_character_by_id(character_id, user_id, db)
+    if not updated_character:
+        raise HTTPException(status_code=404, detail="Character not found or not authorized to update")
+    return updated_character

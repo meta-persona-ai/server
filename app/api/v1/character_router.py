@@ -31,7 +31,14 @@ async def create_character(character: CharacterCreate, authorization: str = Depe
 async def get_all_characters(db: Session = Depends(get_db)):
     return character_service.get_all_characters(db)
 
-@router.get("/me",
+@router.get("/{character_id}",
+            description="특정 캐릭터를 조회하는 API입니다.",
+            response_model=CharacterResponse
+            )
+async def get_character(character_id: int, db: Session = Depends(get_db)):
+    return character_service.get_character(character_id, db)
+
+@router.get("/my/characters",
             description="인증된 사용자의 모든 캐릭터를 조회하는 API입니다.",
             response_model=list[CharacterResponse]
             )
@@ -47,6 +54,14 @@ async def update_character(character_id: int, character_update: CharacterUpdate,
     payload = jwt_util.decode_token(authorization)
     success = character_service.update_character_by_id(character_id, character_update, payload.id, db)
     return {"message": "Character updated successfully"} if success else {"message": "Character update failed"}
+
+@router.put("/{character_id}/deactivate",
+            response_model=MessageResponse
+            )
+async def deactivate_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    deactivated_user = character_service.deactivate_character_by_id(character_id, payload.id, db)
+    return {"message": "Character deactivated successfully"} if deactivated_user else {"message": "Character deactivation failed"}
 
 @router.delete("/{character_id}",
                description="특정 캐릭터를 삭제하는 API입니다.",
