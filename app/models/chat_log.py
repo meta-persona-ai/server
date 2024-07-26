@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, DateTime, Enum, Text, ForeignKey, BigInteger
-from sqlalchemy.sql import func
+from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger
+from datetime import datetime, timezone
+from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import relationship
 import enum
 
@@ -18,7 +19,7 @@ class ChatLog(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=True)
     character_id = Column(Integer, ForeignKey('characters.character_id'), nullable=True)
     role = Column(Enum(ChatTypeEnum), nullable=False)
-    log_create_at = Column(DateTime(timezone=True), server_default=func.now())
+    log_create_at = Column(DATETIME(fsp=3), default=lambda: datetime.now(timezone.utc))
     contents = Column(Text, nullable=True)
 
     chat = relationship("Chat", back_populates="chat_logs")
