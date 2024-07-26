@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.utils import jwt_util
 from app.schemas.request.chat_request_schema import ChatCreate
-from app.schemas.response.chat_response_schema import ChatResponse, MessageResponse
+from app.schemas.response.chat_response_schema import MessageResponse
 from app.services import chat_service, character_service
 
 
