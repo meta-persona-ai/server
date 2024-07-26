@@ -1,43 +1,17 @@
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
-import pytest
 
 from app.main import app
-from app.db.initial_data import DatabaseInitializer
-from app.db.database import Base, get_db
+from app.db.database import get_db
 from app.models.character import Character
 from app.models.chat import Chat
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from tests.db.database import override_get_db, db_session
 
-Base.metadata.create_all(bind=engine)
 
 client = TestClient(app)
-
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
 app.dependency_overrides[get_db] = override_get_db
 
-@pytest.fixture(scope="module")
-def db_session():
-    Base.metadata.create_all(bind=engine)
-    db = TestingSessionLocal()
-    
-    initializer = DatabaseInitializer(engine)
-    initializer.init_db()
-
-    yield db
-    
-    db.close()
-    Base.metadata.drop_all(bind=engine)
 
 def test_create_chat(db_session: Session):
     response = client.post("/api/auth/token/test")
