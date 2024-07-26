@@ -22,7 +22,7 @@ def test_create_chat(client: TestClient, db_session: Session):
     data = response.json()
     assert data["message"] == "Chat created successfully"
 
-def test_get_my_chat(client: TestClient):
+def test_get_my_chats(client: TestClient):
     response = client.post("/api/v1/auth/token/test")
     assert response.status_code == 200
     test_token = response.json().get("jwtToken")
