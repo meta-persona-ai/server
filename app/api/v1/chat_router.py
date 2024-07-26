@@ -10,7 +10,7 @@ from app.services import chat_service, character_service
 
 
 router = APIRouter(
-    prefix="/api/chat",
+    prefix="/api/v1/chat",
     tags=["Chat"]
 )
 api_key_header = APIKeyHeader(name="Authorization")

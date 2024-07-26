@@ -9,7 +9,7 @@ from ...services import user_service
 from app.utils import jwt_util
 
 router = APIRouter(
-    prefix="/api/user",
+    prefix="/api/v1/user",
     tags=["User"]
 )
 
