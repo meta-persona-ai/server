@@ -15,6 +15,8 @@ class CharacterSchema(BaseModel):
     character_details: str | None = None
     user_id: int | None = None
 
+    model_config = ConfigDict(from_attributes=True)
+
 class User(BaseModel):
     user_id: int
     user_email: str
