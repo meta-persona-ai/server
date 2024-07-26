@@ -1,11 +1,13 @@
-from fastapi import APIRouter, WebSocket
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends
 from fastapi.security import APIKeyHeader
-from starlette.websockets import WebSocketDisconnect
-import os
-import asyncio
+from sqlalchemy.orm import Session
+
+from app.db.database import get_db
+from app.utils import jwt_util
 
 from app.services import chat_log_service
+from app.schemas.response.chat_log_resposne_schema import ChatLogResponse, MessageResponse
+
 
 
 router = APIRouter(
@@ -14,26 +16,18 @@ router = APIRouter(
 )
 api_key_header = APIKeyHeader(name="Authorization")
 
-@router.get("/", response_class=HTMLResponse)
-async def serve_homepage():
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    file_path = os.path.join(project_root, "app", "templates", "client.html")
-    with open(file_path, "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
 
+@router.get("/me/{chat_id}",
+            response_model=list[ChatLogResponse]
+            )
+async def get_chat_logs_by_chat_id_and_user_id(chat_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    return chat_log_service.get_chat_logs_by_chat_id_and_user_id(chat_id, payload.id, db)
 
-
-
-@router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-
-    response_id = 0  # Initialize response ID
-    try:
-        while True:
-            data = await websocket.receive_text()
-            response_id += 1
-            asyncio.create_task(chat_log_service.echo_message(websocket, data, response_id))
-    except WebSocketDisconnect:
-        print("WebSocketDisconnect!!")
+@router.delete("/{log_id}",
+               response_model=MessageResponse
+               )
+async def delete_chat(log_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    chat_log_service.delete_chat_log_by_id(log_id, payload.id, db)
+    return {"message": "Log deleted successfully"}

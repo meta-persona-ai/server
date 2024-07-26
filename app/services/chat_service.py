@@ -17,7 +17,7 @@ def get_chats_by_user_id(user_id: int, db: Session) -> list[Chat]:
         raise HTTPException(status_code=404, detail="Chats not found")
     return chats
 
-def get_chats_by_chat_id_and_user_id(chat_id: int, user_id: int, db: Session) -> Chat:
+def get_chat_by_chat_id_and_user_id(chat_id: int, user_id: int, db: Session) -> Chat:
     return chat_crud.get_chats_by_chat_id_and_user_id(chat_id, user_id, db)
 
 # delete

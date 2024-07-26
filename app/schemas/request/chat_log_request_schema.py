@@ -10,5 +10,5 @@ class ChatLogCreate(BaseModel):
     chat_id: int
     user_id: int
     character_id: int
-    rool: ChatLogRoolEnum
+    role: ChatLogRoolEnum
     contents: str

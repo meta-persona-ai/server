@@ -1,8 +1,6 @@
 from fastapi import APIRouter, WebSocket, Depends
 from fastapi.security import APIKeyHeader
-from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-import os
 
 from app.db.database import get_db
 from app.services import chatting_service
