@@ -1,9 +1,9 @@
 import yaml
 from sqlalchemy.orm import Session
 
-from ..schemas import user_schema, schemas
-from ..schemas.request import chat_request_schema, chat_log_request_schema
-from ..crud import auth_crud, user_crud, character_crud, chat_crud, chat_log_crud
+# from ..schemas import schemas
+from ..schemas.request import chat_request_schema, chat_log_request_schema, user_request_schema, relationship_request_schema, character_request_schema
+from ..crud import auth_crud, user_crud, character_crud, chat_crud, chat_log_crud, relationship_crud
 
 class DatabaseInitializer:
     def __init__(self, engine, data_file='example_data.yaml'):
@@ -16,6 +16,7 @@ class DatabaseInitializer:
         data = self._load_data()
 
         self._init_users(db, data['users'])
+        self._init_relationship(db, data['relationships'])
         self._init_characters(db, data['characters'])
         self._init_chats(db, data['chats'])
         self._init_chat_logs(db, data['chat_logs'])
@@ -23,12 +24,12 @@ class DatabaseInitializer:
         db.close()
 
     def _load_data(self):
-        with open(self.data_file, 'r') as file:
+        with open(self.data_file, 'r', encoding='utf-8') as file:
             return yaml.safe_load(file)
 
     def _init_users(self, db: Session, users):
         for user_data in users:
-            test_user = user_schema.UserCreate(
+            test_user = user_request_schema.UserCreate(
                 user_email=user_data['email'],
                 user_password=user_data['password'],
                 user_name=user_data['name'],
@@ -39,22 +40,32 @@ class DatabaseInitializer:
             if not existing_user:
                 auth_crud.create_user(test_user, db)
 
+    def _init_relationship(self, db: Session, relationships):
+        for relationship_data in relationships:
+            test_relationship = relationship_request_schema.RelationshipCreate(
+                relationship_name=relationship_data["relationship_name"]
+            )
+
+            existing_relationship = relationship_crud.get_relationship_by_name(relationship_data['relationship_name'], db)
+            if not existing_relationship:
+                relationship_crud.create_relationship(test_relationship, db)
+
     def _init_characters(self, db: Session, characters):
         for char_data in characters:
             init_user = user_crud.get_user_by_email(char_data['user_email'], db)
 
-            character = schemas.CharacterSchema(
+            character = character_request_schema.CharacterCreate(
                 character_name=char_data['name'],
-                character_gender=char_data['gender'],
                 character_profile=char_data['profile'],
+                character_gender=char_data['gender'],
                 character_personality=char_data['personality'],
                 character_details=char_data['details'],
-                user_id=init_user.user_id
+                character_is_public=True
             )
 
             existing_character = character_crud.get_characters_by_name(char_data['name'], db)
             if not existing_character:
-                character_crud.create_character(character, db)
+                character_crud.create_character(character, init_user.user_id, db)
 
     def _init_chats(self, db: Session, chats):
         for chat_data in chats:

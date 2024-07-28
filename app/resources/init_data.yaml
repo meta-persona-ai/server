@@ -8,6 +8,14 @@ users:
     name: "Another User"
     profile: "another.jpg"
 
+relationships:
+  - relationship_name: "연인"
+  - relationship_name: "친구"
+  - relationship_name: "가족"
+  - relationship_name: "직장동료"
+  - relationship_name: "비밀친구"
+  - relationship_name: "상사"
+
 characters:
   - name: "init character"
     gender: "male"

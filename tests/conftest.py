@@ -17,7 +17,8 @@ base_db_url = DATABASE_URL.split('?')[0]
 db_name = base_db_url.rsplit('/', 1)[-1]
 base_db_url = base_db_url.rsplit('/', 1)[0]
 
-TEST_DATABASE_URL = f"{base_db_url}/test_db"
+TEST_DATABASE_NAME = "persona_test"
+TEST_DATABASE_URL = f"{base_db_url}/{TEST_DATABASE_NAME}"
 
 engine = create_engine(
     TEST_DATABASE_URL,
@@ -33,7 +34,7 @@ def db_engine():
     )
 
     with test_engine.connect() as connection:
-        connection.execute(text(f"CREATE DATABASE IF NOT EXISTS test_db CHARACTER SET utf8mb4"))
+        connection.execute(text(f"CREATE DATABASE IF NOT EXISTS {TEST_DATABASE_NAME} CHARACTER SET utf8mb4"))
 
     test_engine = create_engine(
         TEST_DATABASE_URL,

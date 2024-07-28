@@ -17,7 +17,7 @@ class CharacterSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-class User(BaseModel):
+class UserSchema(BaseModel):
     user_id: int
     user_email: str
     user_name: str

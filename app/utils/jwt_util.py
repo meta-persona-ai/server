@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 from ..models.user import User
-from app.schemas.user_schema import UserSchema
+from app.schemas.schemas import UserSchema
 from pydantic import BaseModel
 
 
@@ -34,9 +34,9 @@ def make_access_token(user: User) -> str:
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
-def decode_token(authorization: str) -> UserSchema:
+def decode_token(authorization: str) -> TokenData:
     token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
-    payload = UserSchema(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
+    payload = TokenData(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
     return payload
 
 
