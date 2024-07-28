@@ -18,6 +18,3 @@ class User(Base):
     chats = relationship("Chat", back_populates="user")
     chat_logs = relationship("ChatLog", back_populates="user")
     characters = relationship("Character", back_populates="user")
-
-from .chat import Chat
-from .chat_log import ChatLog

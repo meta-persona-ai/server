@@ -6,8 +6,8 @@ from ..utils import google_api
 from ..utils import jwt_util
 from ..crud import auth_crud
 from ..services import user_service
-from ..schemas.user_schema import UserCreate
-from app.schemas.user_schema import UserSchema
+from ..schemas.request.user_request_schema import UserCreate
+from ..schemas.schemas import UserSchema
 
 
 logger = setup_logger()

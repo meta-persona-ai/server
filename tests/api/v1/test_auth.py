@@ -1,13 +1,7 @@
-# test_auth.py
-
-from sqlalchemy.orm import Session
 import pytest
 
 @pytest.fixture
 def client(client):
-    """
-    client 픽스처를 가져옵니다.
-    """
     return client
 
 def test_get_test_token(client):
