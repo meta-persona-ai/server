@@ -19,6 +19,8 @@ pyhumps = "*"
 fastapi-camelcase = "*"
 boto3 = "*"
 pydantic-settings = "*"
+langchain = "*"
+langchain-google-genai = "*"
 
 [dev-packages]
 pytest = "*"
