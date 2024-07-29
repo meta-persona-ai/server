@@ -3,9 +3,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 import os
 
+from ..core.config import settings
+
 load_dotenv()
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = settings.database_url
 db_name = DATABASE_URL.split('/')[-1].split('?')[0]
 
 base_db_url = DATABASE_URL.rsplit('/', 1)[0]

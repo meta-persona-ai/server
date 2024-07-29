@@ -3,8 +3,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import pytest
-import os
 
+from app.core.config import settings
 from app.db.database import Base, get_db
 from app.db.initial_data import DatabaseInitializer
 
@@ -12,7 +12,7 @@ from app.main import app
 
 load_dotenv()
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = settings.database_url
 base_db_url = DATABASE_URL.split('?')[0]
 db_name = base_db_url.rsplit('/', 1)[-1]
 base_db_url = base_db_url.rsplit('/', 1)[0]
