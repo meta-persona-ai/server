@@ -18,6 +18,7 @@ pytz = "*"
 pyhumps = "*"
 fastapi-camelcase = "*"
 boto3 = "*"
+pydantic-settings = "*"
 
 [dev-packages]
 pytest = "*"

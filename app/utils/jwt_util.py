@@ -1,17 +1,15 @@
 from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from dotenv import load_dotenv
-import os
 
+from ..core.config import settings
 from ..models.user import User
-from app.schemas.schemas import UserSchema
 from pydantic import BaseModel
 
 
-load_dotenv()
-JWT_SECRET = os.getenv('JWT_SECRET')
-JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
+# load_dotenv()
+JWT_SECRET = settings.jwt_secret
+JWT_ALGORITHM = settings.jwt_algorithm
 
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
