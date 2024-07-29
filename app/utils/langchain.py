@@ -8,6 +8,9 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.memory import ConversationBufferMemory
 
 
+os.environ["GRPC_VERBOSITY"] = "NONE"
+os.environ["GRPC_TRACE"] = "NONE"
+
 def check_api_key(api_name:str) -> None:
     """환경변수에 API가 있는지 확인하는 함수
 
@@ -35,15 +38,13 @@ async def simple_chat(input:str) -> None:
 
 
 class GeminiChain:
-    def __init__(
-        self,
-        user_info=None,
-        character_info=None,
-        chat_logs=None
-    ) -> None:
-        
+    def __init__(self, user_info=None, character_info=None, chat_logs=None) -> None:
+        self.user_info = user_info
+        self.character_info = character_info
+        self.chat_logs = chat_logs
+
         # 입력값에 대한 변수
-        self.inputs = self._get_inputs(user_info, character_info, chat_logs)
+        self.inputs = self._get_inputs()
         self.memory = ConversationBufferMemory(
             return_messages=True, 
             memory_key="chat_history"
@@ -55,11 +56,11 @@ class GeminiChain:
         self.temperature = 0.7
         self.chain = self._make_chain()
 
-    def _get_inputs(self, user_info, character_info, chat_logs):
+    def _get_inputs(self):
         inputs = {
-            "user_info": user_info,
-            "character_info" : character_info,
-            "chat_history": self._get_chat_logs(chat_logs)
+            "user_info": self.user_info,
+            "character_info" : self.character_info,
+            "chat_history": self._get_chat_logs(self.chat_logs)
         }
 
         return inputs

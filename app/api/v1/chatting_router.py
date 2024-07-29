@@ -18,7 +18,7 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str, db: Session = D
     await chatting_service.chatting(websocket, chat_id, db)
 
 
-from app.lib.langchain import GeminiChain, simple_chat
+from app.utils.langchain import GeminiChain, simple_chat
 
 @router.get("/test")
 async def chatbot():

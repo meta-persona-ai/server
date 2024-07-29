@@ -8,7 +8,8 @@ from app.schemas.chatting_schema import CharacterMessage
 from app.schemas.schemas import CharacterSchema
 from app.services import chat_log_service
 
-from app.lib.langchain import GeminiChain, simple_chat
+from app.utils.langchain import GeminiChain
+
 
 logger = setup_logger()
 
@@ -22,14 +23,16 @@ async def echo_message(room: ConnectionManager, chat_log: ChatLogCreate, charact
         character_schema (CharacterSchema): 캐릭터 스키마 객체.
         response_id (int): 응답 ID.
         db (Session): 데이터베이스 세션 객체.
-    """
-    logger.info(f"▶️  User message received: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, contents: {chat_log.contents}")
+    """ 
+    user_log_message = create_log_message("User", chat_log)
+    logger.info(user_log_message)
     
     await insert_user_message(chat_log, db)
     response_message = await generate_bot_response(room, chat_log, character_schema, response_id)
     await insert_bot_message(chat_log, response_message, db)
     
-    logger.info(f"▶️  Bot response sent: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, response_message: {response_message}")
+    bot_log_message = create_log_message("Bot", chat_log, response_message)
+    logger.info(bot_log_message)
 
 async def insert_user_message(chat_log: ChatLogCreate, db: Session):
     """
@@ -55,28 +58,23 @@ async def generate_bot_response(room: ConnectionManager, chat_log: ChatLogCreate
         str: 생성된 봇 응답 메시지.
     """
     chain = GeminiChain()
-    input_text = "python에 대해 3줄로 알려줄래?"
     new_chain = chain._make_chain()
-
-    inputs = {
-        'user_info': None, 
-        'character_info': None, 
-        'chat_history': [], 
-        'input': chat_log.contents
-        }
-
-    result = new_chain.astream(inputs)
+    inputs = chain._get_inputs()
+    inputs["input"] = chat_log.contents
 
     output = ""
+    result = new_chain.astream(inputs)
     async for token in result:
-        response = {
-            "type": "character",
-            "character_name": character_schema.character_name,
-            "response_id": response_id,
-            "character": token
-        }
-        response_data = CharacterMessage(**response).model_dump_json()
-        await room.broadcast(response_data)
+        for char in token:
+            response = {
+                "type": "character",
+                "character_name": character_schema.character_name,
+                "response_id": response_id,
+                "character": char
+            }
+            response_data = CharacterMessage(**response).model_dump_json()
+            await room.broadcast(response_data)
+            await asyncio.sleep(0.02)
 
         output += token 
 
@@ -116,3 +114,32 @@ async def log_insert_data(chat_id: int, user_id: int, character_id: int, role: s
         role=role,
         contents=contents
     )
+
+def create_log_message(message_type: str, chat_log: ChatLogCreate, response_message: str = None, max_length: int = 100) -> str:
+    """
+    로그 메시지를 생성합니다.
+
+    Args:
+        message_type (str): 메시지 타입 (User 또는 Bot).
+        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
+        response_message (str): 봇의 응답 메시지 (옵션).
+        max_length (int): 메시지의 최대 길이.
+
+    Returns:
+        str: 생성된 로그 메시지.
+    """
+    contents = chat_log.contents.replace('\n', ' ')
+    if len(contents) > max_length:
+        contents = contents[:max_length] + "..."
+    
+    if message_type == "User":
+        return f"▶️  User message received: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, contents: {contents}"
+    
+    if message_type == "Bot":
+        if response_message:
+            response_message = response_message.replace('\n', ' ')
+            if len(response_message) > max_length:
+                response_message = response_message[:max_length] + "..."
+        return f"▶️  Bot response sent: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, response_message: {response_message}"
+    
+    return ""
