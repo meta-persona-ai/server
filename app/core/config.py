@@ -9,10 +9,6 @@ load_dotenv()
 logger = setup_logger()
 
 class Settings(BaseSettings):
-    google_client_id: str
-    google_client_secret: str
-    google_redirect_uri: str
-
     # GOOGLE LOGIN
     google_client_id: str
     google_client_secret: str
@@ -39,6 +35,7 @@ class Settings(BaseSettings):
 
 try:
     settings = Settings()
+    logger.info("📌 Settings loaded successfully.")
 except ValidationError as e:
     logger.error("Error loading settings:")
     for error in e.errors():
