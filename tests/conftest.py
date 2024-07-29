@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import pytest
 
-from app.core.config import settings
+from app.core.env_config import settings
 from app.db.database import Base, get_db
 from app.db.initial_data import DatabaseInitializer
 

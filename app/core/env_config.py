@@ -25,6 +25,9 @@ class Settings(BaseSettings):
 
     # DATABASE
     database_url: str
+
+    # GEMINI
+    google_api_key: str
     
 
     model_config = ConfigDict(

@@ -44,4 +44,4 @@ chat_logs:
   - user_email: "test@example.com"
     character_name: "init character"
     role: "character"
-    contents: "test character output2"
+    contents: "안녕하세요! 👋 무엇을 도와드릴까요? 😊"

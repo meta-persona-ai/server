@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
-import os
 
-from ..core.config import settings
+from ..core.env_config import settings
 
 load_dotenv()
 

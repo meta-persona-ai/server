@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 from ..core.logger_config import setup_logger
-from ..core.config import settings
+from ..core.env_config import settings
 
 logger = setup_logger()
 

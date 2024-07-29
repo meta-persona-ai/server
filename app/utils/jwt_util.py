@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 
-from ..core.config import settings
+from ..core.env_config import settings
 from ..models.user import User
 from pydantic import BaseModel
 

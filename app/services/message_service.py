@@ -8,6 +8,8 @@ from app.schemas.chatting_schema import CharacterMessage
 from app.schemas.schemas import CharacterSchema
 from app.services import chat_log_service
 
+from app.lib.langchain import GeminiChain, simple_chat
+
 logger = setup_logger()
 
 async def echo_message(room: ConnectionManager, chat_log: ChatLogCreate, character_schema: CharacterSchema, response_id: int, db: Session):
@@ -52,19 +54,33 @@ async def generate_bot_response(room: ConnectionManager, chat_log: ChatLogCreate
     Returns:
         str: 생성된 봇 응답 메시지.
     """
-    response_message = ""
-    for char in chat_log.contents + " response":
+    chain = GeminiChain()
+    input_text = "python에 대해 3줄로 알려줄래?"
+    new_chain = chain._make_chain()
+
+    inputs = {
+        'user_info': None, 
+        'character_info': None, 
+        'chat_history': [], 
+        'input': chat_log.contents
+        }
+
+    result = new_chain.astream(inputs)
+
+    output = ""
+    async for token in result:
         response = {
             "type": "character",
             "character_name": character_schema.character_name,
             "response_id": response_id,
-            "character": char
+            "character": token
         }
         response_data = CharacterMessage(**response).model_dump_json()
         await room.broadcast(response_data)
-        response_message += char
-        await asyncio.sleep(0.1)
-    return response_message
+
+        output += token 
+
+    return output
 
 async def insert_bot_message(chat_log: ChatLogCreate, response_message: str, db: Session):
     """
