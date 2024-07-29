@@ -19,25 +19,6 @@ router = APIRouter(
 )
 
 
-@router.get("/login/google",
-            description="구글 로그인 URL을 반환합니다."
-            )
-async def get_google_login_url():
-    login_url = auth_service.login_google()
-    return {
-        "url": login_url
-    }
-
-@router.get("/login/google/callback",
-            description="구글 로그인 후 콜백으로 받은 코드를 사용하여 인증합니다.",
-            response_model=ResponseToken
-            )
-async def auth_google_callback(code: str, db: Session = Depends(get_db)):
-    jwt_token = auth_service.auth_google_web(code, db)
-    return {
-        "jwt_token": jwt_token,
-    }
-
 @router.post("/login/google/id-token",
              description="구글 로그인시 발급되는 id-token을 사용하여 인증합니다.",
              response_model=ResponseToken

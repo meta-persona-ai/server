@@ -13,17 +13,6 @@ from ..schemas.schemas import UserSchema
 logger = setup_logger()
 
 
-def login_google() -> str:
-    return google_api.get_google_login_url()
-
-
-def auth_google_web(code: str, db: Session):
-    access_token = google_api.get_google_token(code)
-    user = google_api.get_google_user_data(access_token)
-
-    return sign_in_or_login(user, db)
-
-
 def auth_google_id_token(id_token: str, db: Session):
     user = google_api.decode_id_token(id_token)
     if not user:

@@ -1,19 +1,18 @@
 from fastapi import UploadFile
 import boto3
 from botocore.exceptions import NoCredentialsError
-from dotenv import load_dotenv
 from datetime import datetime
 import os
 
 from ..core.logger_config import setup_logger
+from ..core.config import settings
 
 logger = setup_logger()
 
-load_dotenv()
-ACCESS_KEY = os.getenv('S3_ACCESS_KEY')
-SECRET_KEY = os.getenv('S3_SECRET_KEY')
-REGION_NAME = os.getenv('S3_REGION_NAME')
-BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
+ACCESS_KEY = settings.s3_access_key
+SECRET_KEY = settings.s3_secret_key
+REGION_NAME = settings.s3_region_name
+BUCKET_NAME = settings.s3_bucket_name
 
 s3 = boto3.client('s3',
                   aws_access_key_id=ACCESS_KEY,
