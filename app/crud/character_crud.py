@@ -118,7 +118,7 @@ def get_characters_by_user_id(user_id: int, db: Session) -> list[Character]:
         return db.query(Character).filter(
             Character.user_id == user_id,
             Character.is_active()
-        ).all()
+        ).order_by(desc(Character.character_created_at)).all()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
 
