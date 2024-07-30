@@ -25,6 +25,9 @@ def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
         raise HTTPException(status_code=404, detail="Characters not found")
     return characters
 
+def get_characters_by_rank(limit: int, db: Session) -> list[Character]:
+    return character_crud.get_characters_by_rank(limit, db)
+
 # update
 def update_character_by_id(character_id: int, character_data: CharacterUpdate, user_id: int, db: Session) -> Character:
     updated_character = character_crud.update_character_by_id(character_id, character_data, user_id, db)

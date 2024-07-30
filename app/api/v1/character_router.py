@@ -39,7 +39,7 @@ async def get_character(character_id: int, authorization: str = Depends(api_key_
     payload = jwt_util.decode_token(authorization)
     return character_service.get_character(character_id, payload.id, db)
 
-@router.get("/my/characters",
+@router.get("/me/",
             description="인증된 사용자의 모든 캐릭터를 조회하는 API입니다.",
             response_model=list[CharacterResponse]
             )
@@ -47,7 +47,14 @@ async def get_my_characters(authorization: str = Depends(api_key_header), db: Se
     payload = jwt_util.decode_token(authorization)
     return character_service.get_characters_by_id(payload.id, db)
 
-@router.put("/{character_id}",
+@router.get("/rank/",
+            description="사용 횟수가 높은 상위 5개의 공개된 캐릭터를 조회하는 API입니다.",
+            response_model=list[CharacterResponse]
+            )
+async def get_characters_by_rank(db: Session = Depends(get_db)):
+    return character_service.get_characters_by_rank(5, db)
+
+@router.put("/{character_id}",  
             description="특정 캐릭터 정보를 업데이트하는 API입니다.",
             response_model=MessageResponse
             )
