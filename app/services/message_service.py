@@ -58,12 +58,11 @@ async def generate_bot_response(room: ConnectionManager, chat_log: ChatLogCreate
         str: 생성된 봇 응답 메시지.
     """
     chain = GeminiChain()
-    new_chain = chain._make_chain()
-    inputs = chain._get_inputs()
+    inputs = chain.inputs
     inputs["input"] = chat_log.contents
 
     output = ""
-    result = new_chain.astream(inputs)
+    result = chain.chain.astream(inputs)
     async for token in result:
         for char in token:
             response = {

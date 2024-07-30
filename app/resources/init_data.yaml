@@ -23,10 +23,53 @@ characters:
     personality: "init personality"
     details: "init details"
     user_email: "test@example.com"
+    relationships: 
+    - relationship_id: 1
+    - relationship_id: 2
+  - name: "init character2"
+    gender: "female"
+    profile: "init profile"
+    personality: "init personality"
+    details: "init details"
+    user_email: "test@example.com"
+    relationships: 
+    - relationship_id: 3
+    - relationship_id: 4
+    - relationship_id: 5
+  # - name: "init character3"
+  #   gender: "female"
+  #   profile: "init profile"
+  #   personality: "init personality"
+  #   details: "init details"
+  #   user_email: "test@example.com"
+  # - name: "init character4"
+  #   gender: "female"
+  #   profile: "init profile"
+  #   personality: "init personality"
+  #   details: "init details"
+  #   user_email: "another@example.com"
+  # - name: "init character5"
+  #   gender: "female"
+  #   profile: "init profile"
+  #   personality: "init personality"
+  #   details: "init details"
+  #   user_email: "another@example.com"
+  # - name: "init character6"
+  #   gender: "female"
+  #   profile: "init profile"
+  #   personality: "init personality"
+  #   details: "init details"
+  #   user_email: "another@example.com"
 
 chats:
   - user_email: "test@example.com"
     character_name: "init character"
+  - user_email: "test@example.com"
+    character_name: "init character"
+  - user_email: "test@example.com"
+    character_name: "init character"
+  - user_email: "test@example.com"
+    character_name: "init character2"
 
 chat_logs:
   - user_email: "test@example.com"

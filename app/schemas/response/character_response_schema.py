@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import datetime
 from fastapi_camelcase import CamelModel
 
 
@@ -14,6 +15,12 @@ class Relationship(CamelModel):
 class CharacterRelationships(CamelModel):
     relationship: Relationship
 
+class User(CamelModel):
+    user_id: int
+    user_email: str
+    user_name: str
+    user_profile: str | None = None
+
 class CharacterResponse(CamelModel):
     character_id: int
     character_name: str
@@ -22,7 +29,9 @@ class CharacterResponse(CamelModel):
     character_personality: str | None = None
     character_details: str | None = None
     character_relationships: list[CharacterRelationships]
-    user_id: int
+    character_created_at: datetime | None = None
+    # user_id: int
+    user: User
 
 class CharacterCreateResponse(CamelModel):
     character_id: int
