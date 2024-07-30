@@ -36,6 +36,11 @@ class Character(Base):
     chat_logs = relationship("ChatLog", back_populates="character")
     character_relationships = relationship("CharacterRelationship", back_populates="character", cascade="all, delete-orphan")
 
+    @classmethod
+    def is_active(cls):
+        return cls.character_is_active == True
+
+
 @event.listens_for(Character, 'before_update')
 def receive_before_update(mapper, connection, target):
     target.character_updated_at = datetime.now()

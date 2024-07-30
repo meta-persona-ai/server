@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, BigInteger, event, text
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
-from ..db.database import Base
+from ..db.database import Base, SessionLocal
+from ..models.character import Character
 
 class Chat(Base):
     __tablename__ = "chats"
@@ -15,3 +16,10 @@ class Chat(Base):
     user = relationship("User", back_populates="chats", lazy='selectin')
     character = relationship("Character", back_populates="chats", lazy='selectin')
     chat_logs = relationship("ChatLog", back_populates="chat", lazy='selectin', cascade="all, delete-orphan")
+
+@event.listens_for(Chat, 'after_insert')
+def after_insert_listener(mapper, connection, target):
+    connection.execute(
+        text("UPDATE characters SET character_usage_count = character_usage_count + 1 WHERE character_id = :character_id"),
+        {"character_id": target.character_id}
+    )
