@@ -4,20 +4,18 @@ import pytest
 
 from app.models.character import Character
 
+from tests.get_token import get_token
+
 @pytest.fixture
 def client(client: TestClient) -> TestClient:
     return client
 
-def test_create_character(client: TestClient, db_session: Session):
+def test_create_character(client: TestClient):
     """
     캐릭터 생성 테스트.
     이 테스트는 /api/characters 엔드포인트를 호출하여 새로운 캐릭터를 생성하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     exam_character = {
         "characterName": "test",
@@ -35,14 +33,14 @@ def test_create_character(client: TestClient, db_session: Session):
     assert data['message'] == 'Character created successfully'
     character_id = data['characterId']
 
-    response = client.get(f"/api/v1/characters/{character_id}")
+    response = client.get(f"/api/v1/characters/{character_id}", headers=headers)
     assert response.status_code == 200
     data = response.json()
 
     assert [r['relationship']['relationshipId'] for r in data['characterRelationships']] == [1,2]
 
 
-def test_get_all_characters(client):
+def test_get_all_characters(client: TestClient):
     """
     모든 캐릭터 조회 테스트.
     이 테스트는 /api/characters 엔드포인트를 호출하여 모든 캐릭터 정보를 조회하는지 확인합니다.
@@ -53,11 +51,13 @@ def test_get_all_characters(client):
     assert len(data) > 0
 
 def test_get_character(client):
+    headers = get_token(client)
+
     response = client.get("/api/v1/characters/")
     assert response.status_code == 200
     character_id = response.json()[0]['characterId']
 
-    response = client.get(f"/api/v1/characters/{character_id}")
+    response = client.get(f"/api/v1/characters/{character_id}", headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data['characterId'] == character_id
@@ -67,11 +67,7 @@ def test_get_my_characters(client: TestClient):
     로그인한 사용자의 캐릭터 조회 테스트.
     이 테스트는 /api/characters/me 엔드포인트를 호출하여 로그인한 사용자의 캐릭터를 조회하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
     
     response = client.get("/api/v1/characters/my/characters", headers=headers)
     print(response.json())
@@ -84,11 +80,7 @@ def test_update_character(client: TestClient):
     캐릭터 업데이트 테스트.
     이 테스트는 /api/characters 엔드포인트를 호출하여 기존 캐릭터 정보를 업데이트하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
     
     response = client.put(
         "/api/v1/characters/1", 
@@ -99,15 +91,11 @@ def test_update_character(client: TestClient):
     assert data["message"] == "Character updated successfully"
 
 def test_update_character_is_public(client: TestClient, db_session: Session):
+    headers = get_token(client)
+
     response = client.get("/api/v1/characters/")
     assert response.status_code == 200
     character_id = response.json()[0]['characterId']
-
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
 
     updata_data = {
         "characterName": "Updated Character",
@@ -128,16 +116,12 @@ def test_update_character_is_public(client: TestClient, db_session: Session):
     assert updated_character.character_is_public == False
 
 def test_update_character_deactivate(client: TestClient, db_session: Session):
+    headers = get_token(client)
+
     response = client.get("/api/v1/characters/")
     assert response.status_code == 200
     character_id = response.json()[0]['characterId']
 
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
-    
     response = client.put(
         f"/api/v1/characters/{character_id}/deactivate", 
         headers=headers

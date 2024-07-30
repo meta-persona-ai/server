@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, BigInteger, Enum, Text, ForeignKey, Boolean, event
+from sqlalchemy import and_
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
@@ -35,6 +36,11 @@ class Character(Base):
     chats = relationship("Chat", back_populates="character")
     chat_logs = relationship("ChatLog", back_populates="character")
     character_relationships = relationship("CharacterRelationship", back_populates="character", cascade="all, delete-orphan")
+
+    @classmethod
+    def is_active(cls):
+        return cls.character_is_active == True
+
 
 @event.listens_for(Character, 'before_update')
 def receive_before_update(mapper, connection, target):

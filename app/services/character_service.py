@@ -16,8 +16,8 @@ def create_character(character_create: CharacterCreate, user_id: int, db: Sessio
 def get_all_characters(db: Session) -> list[Character]:
     return character_crud.get_all_characters(db)
 
-def get_character(character_id: int, db: Session) -> Character:
-    return character_crud.get_character(character_id, db)
+def get_character(character_id: int, user_id: int, db: Session) -> Character:
+    return character_crud.get_character(character_id, user_id, db)
 
 def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
     characters = character_crud.get_characters_by_user_id(user_id, db)

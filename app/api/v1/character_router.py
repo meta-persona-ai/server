@@ -35,8 +35,9 @@ async def get_all_characters(db: Session = Depends(get_db)):
             description="특정 캐릭터를 조회하는 API입니다.",
             response_model=CharacterResponse
             )
-async def get_character(character_id: int, db: Session = Depends(get_db)):
-    return character_service.get_character(character_id, db)
+async def get_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    payload = jwt_util.decode_token(authorization)
+    return character_service.get_character(character_id, payload.id, db)
 
 @router.get("/my/characters",
             description="인증된 사용자의 모든 캐릭터를 조회하는 API입니다.",

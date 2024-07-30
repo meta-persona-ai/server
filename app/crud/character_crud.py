@@ -39,25 +39,41 @@ def create_character(character: CharacterCreate, user_id:int, db: Session) -> Ch
 # select
 def get_all_characters(db: Session) -> list[Character]:
     try:
-        return db.query(Character).all()
+        return db.query(Character).filter(
+            Character.character_is_public == True,
+            Character.is_active()
+            ).all()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
 
-def get_character(character_id: int, db: Session) -> Character:
+def get_character(character_id: int, user_id: int, db: Session) -> Character:
     try:
-        return db.query(Character).filter(Character.character_id == character_id).first()
+        character = db.query(Character).filter(
+            Character.character_id == character_id,
+            (Character.character_is_public == True) | (Character.user_id == user_id),
+            Character.is_active()
+        ).first()
+        if not character:
+            raise HTTPException(status_code=404, detail="Character not found")
+        return character
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
 
 def get_characters_by_user_id(user_id: int, db: Session) -> list[Character]:
     try:
-        return db.query(Character).filter(Character.user_id == user_id).all()
+        return db.query(Character).filter(
+            Character.user_id == user_id,
+            Character.is_active()
+            ).all()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
     
 def get_characters_by_name(character_name: str, db: Session) -> Character:
     try:
-        return db.query(Character).filter(Character.character_name == character_name).first()
+        return db.query(Character).filter(
+            Character.character_name == character_name,
+            Character.is_active()
+            ).first()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Database error")
 
@@ -66,7 +82,8 @@ def update_character_by_id(character_id: int, character_data: CharacterUpdate, u
     try:
         character_to_update = db.query(Character).filter(
             Character.character_id == character_id,
-            Character.user_id == user_id
+            Character.user_id == user_id,
+            Character.is_active()
         ).first()
 
         if character_to_update:
@@ -87,7 +104,8 @@ def delete_character_by_id(character_id: int, user_id: int, db: Session) -> bool
     try:
         character_to_delete = db.query(Character).filter(
             Character.character_id == character_id,
-            Character.user_id == user_id
+            Character.user_id == user_id,
+            Character.is_active()
         ).first()
         
         if character_to_delete:
@@ -104,7 +122,9 @@ def delete_character_by_id(character_id: int, user_id: int, db: Session) -> bool
 def deactivate_character_by_id(character_id:int, user_id: int, db: Session):
     character_to_deactivate = db.query(Character).filter(
         Character.character_id == character_id,
-        Character.user_id == user_id).first()
+        Character.user_id == user_id,
+        Character.is_active()
+        ).first()
     if character_to_deactivate:
         character_to_deactivate.character_is_active = False
         db.commit()
