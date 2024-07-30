@@ -60,7 +60,8 @@ class DatabaseInitializer:
                 character_gender=char_data['gender'],
                 character_personality=char_data['personality'],
                 character_details=char_data['details'],
-                character_is_public=True
+                character_is_public=True,
+                relationships=[relationship['relationship_id'] for relationship in char_data['relationships']]
             )
 
             existing_character = character_crud.get_characters_by_name(char_data['name'], db)

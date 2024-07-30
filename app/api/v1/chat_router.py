@@ -20,10 +20,10 @@ api_key_header = APIKeyHeader(name="Authorization")
             response_model=MessageResponse
             )
 async def create_chat(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    character = character_service.get_characters_by_id(character_id, db)
+    payload = jwt_util.decode_token(authorization)
+    character = character_service.get_characters_by_id(payload.id, db)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
-    payload = jwt_util.decode_token(authorization)
     chat = ChatCreate(user_id=payload.id, character_id=character_id)
     success = chat_service.create_chat(chat, db)
     return {"message": "Chat created successfully"} if success else {"message": "Chat creation failed"}

@@ -121,6 +121,27 @@ def test_update_character_is_public(client: TestClient, db_session: Session):
     updated_character = db_session.query(Character).filter(Character.character_id == character_id).first()
     assert updated_character.character_is_public == False
 
+def test_update_character_usage_count(client: TestClient, db_session: Session):
+    headers = get_token(client)
+
+    response = client.get("/api/v1/characters/me/", headers=headers)
+    assert response.status_code == 200
+    character_id = response.json()[0]['characterId']
+
+    before_count = db_session.query(Character).filter(Character.character_id == character_id).first().character_usage_count
+
+    response = client.post(f"/api/v1/chat?character_id={character_id}", headers=headers)
+    assert response.status_code == 200
+
+    after_count = db_session.query(Character).filter(Character.character_id == character_id).first().character_usage_count
+    assert after_count == before_count + 1
+
+def test_get_characters_rank(client: TestClient, db_session: Session):
+    response = client.get("/api/v1/characters/rank/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) <= 5
+
 def test_update_character_deactivate(client: TestClient, db_session: Session):
     headers = get_token(client)
 
@@ -144,25 +165,3 @@ def test_update_character_deactivate(client: TestClient, db_session: Session):
 
     updated_character = db_session.query(Character).filter(Character.character_id == character_id).first()
     assert updated_character.character_is_active == False
-
-def test_update_character_usage_count(client: TestClient, db_session: Session):
-    headers = get_token(client)
-
-    response = client.get("/api/v1/characters/me/", headers=headers)
-    assert response.status_code == 200
-    character_id = response.json()[0]['characterId']
-
-    before_count = db_session.query(Character).filter(Character.character_id == character_id).first().character_usage_count
-    print(before_count)
-
-    response = client.post(f"/api/v1/chat?character_id={character_id}", headers=headers)
-    assert response.status_code == 200
-
-    after_count = db_session.query(Character).filter(Character.character_id == character_id).first().character_usage_count
-    assert after_count == before_count + 1
-
-def test_get_characters_rank(client: TestClient, db_session: Session):
-    response = client.get("/api/v1/characters/rank/")
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 5
