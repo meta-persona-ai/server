@@ -27,6 +27,10 @@ characters:
 chats:
   - user_email: "test@example.com"
     character_name: "init character"
+  - user_email: "test@example.com"
+    character_name: "init character"
+  - user_email: "test@example.com"
+    character_name: "init character"
 
 chat_logs:
   - user_email: "test@example.com"

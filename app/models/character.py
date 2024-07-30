@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, BigInteger, Enum, Text, ForeignKey, Boolean, event
-from sqlalchemy import and_
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
