@@ -28,7 +28,7 @@ async def create_chat(character_id: int, authorization: str = Depends(api_key_he
     success = chat_service.create_chat(chat, db)
     return {"message": "Chat created successfully"} if success else {"message": "Chat creation failed"}
 
-@router.get("/me",
+@router.get("/me/",
             description="인증된 사용자의 모든 채팅방를 조회하는 API입니다.",
             response_model=list[ChatResponse]
             )

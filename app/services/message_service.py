@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import asyncio
+from google.api_core.exceptions import InternalServerError
 
 from app.core.logger_config import setup_logger
 from app.utils.socket_connection_manager import ConnectionManager
@@ -9,11 +10,20 @@ from app.schemas.schemas import CharacterSchema
 from app.services import chat_log_service
 
 from app.utils.langchain import GeminiChain
+from app.utils import const
 
 
 logger = setup_logger()
 
-async def echo_message(room: ConnectionManager, chat_log: ChatLogCreate, character_schema: CharacterSchema, response_id: int, db: Session):
+async def echo_message(
+        room: ConnectionManager, 
+        chat_log: ChatLogCreate, 
+        character_schema: CharacterSchema, 
+        response_id: int, 
+        db: Session, 
+        max_retries: int = const.MAX_RETRIES, 
+        retry_delay: int = const.RETRY_DELAY
+        ):
     """
     사용자 메시지를 처리하고 봇의 응답을 생성 및 방송합니다.
 
@@ -23,12 +33,26 @@ async def echo_message(room: ConnectionManager, chat_log: ChatLogCreate, charact
         character_schema (CharacterSchema): 캐릭터 스키마 객체.
         response_id (int): 응답 ID.
         db (Session): 데이터베이스 세션 객체.
+        max_retries (int): 최대 재시도 횟수. 기본값은 3입니다.
+        retry_delay (int): 재시도 사이의 대기 시간(초). 기본값은 1초입니다.
     """ 
     user_log_message = create_log_message("User", chat_log)
     logger.info(user_log_message)
     
     await insert_user_message(chat_log, db)
-    response_message = await generate_bot_response(room, chat_log, character_schema, response_id)
+
+    for attempt in range(max_retries):
+        try:
+            response_message = await generate_bot_response(room, chat_log, character_schema, response_id)
+            break
+        except InternalServerError as e:
+            if attempt < max_retries - 1:
+                logger.warning(f"InternalServerError: {e}. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                await asyncio.sleep(retry_delay)
+            else:
+                logger.error(f"InternalServerError: {e}. All {max_retries} attempts failed.")
+                response_message = "Sorry, I'm having trouble processing your request right now. Please try again later."
+    
     await insert_bot_message(chat_log, response_message, db)
     
     bot_log_message = create_log_message("Bot", chat_log, response_message)

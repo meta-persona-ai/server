@@ -17,7 +17,7 @@ def test_get_my_chat(client: TestClient):
 
     headers = {"Authorization": f"Bearer {test_token}"}
     
-    response = client.get(f"/api/v1/chat/me", headers=headers)
+    response = client.get(f"/api/v1/chat/me/", headers=headers)
     assert response.status_code == 200
     data = response.json()
 
@@ -25,6 +25,8 @@ def test_get_my_chat(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
+    print(data)
+    assert False
 
 def test_delete_chat(client: TestClient):
     """
@@ -37,7 +39,7 @@ def test_delete_chat(client: TestClient):
 
     headers = {"Authorization": f"Bearer {test_token}"}
 
-    response = client.get(f"/api/v1/chat/me", headers=headers)
+    response = client.get(f"/api/v1/chat/me/", headers=headers)
     assert response.status_code == 200
     data = response.json()
     chat_id = data[0]['chatId']
