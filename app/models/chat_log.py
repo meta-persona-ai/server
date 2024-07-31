@@ -2,12 +2,12 @@ from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger, Sequ
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import relationship
-import enum
+from enum import Enum as PyEnum
 
 from ..db.database import Base
 
 
-class ChatTypeEnum(enum.Enum):
+class ChatTypeEnum(PyEnum):
     user = 'user'
     character = 'character'
 
