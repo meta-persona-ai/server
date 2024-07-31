@@ -47,9 +47,11 @@ def verify_token(token: str) -> TokenData:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         user_id: str = payload.get("id")
         if user_id is None:
+            logger.error("❌ User ID is missing in token payload.")
             raise credentials_exception
         
         token_data = TokenData(**payload)
     except JWTError:
+        logger.error("❌ Token decoding failed. Invalid token.")
         raise credentials_exception
     return token_data
