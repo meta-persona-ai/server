@@ -3,6 +3,8 @@ import pytest
 from sqlalchemy.orm import Session
 from app.models.user import User
 
+from tests.get_token import get_token
+
 @pytest.fixture
 def client(client: TestClient) -> TestClient:
     return client
@@ -54,6 +56,27 @@ def test_update_current_user(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "User updated successfully"
+
+def test_update_current_user2(client: TestClient, db_session: Session):
+    headers = get_token(client)
+
+    gender = "other"
+    birthdate = "1990-01-01T00:00:00"
+
+    response = client.put(
+        f"/api/v1/user/me",
+        json={"userGender": gender, "userBirthdate": birthdate},
+        headers=headers
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "User updated successfully"
+
+    response = client.get(f"/api/v1/user/me", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['userGender'] == gender
+    assert data['userBirthdate'] == birthdate
 
 def test_deactivate_user(client: TestClient, db_session: Session):
     """
