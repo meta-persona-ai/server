@@ -1,26 +1,17 @@
 import os 
 from pathlib import Path
-from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import AIMessage,HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain.memory import ConversationBufferMemory
 
+from ..core.env_config import settings
+
 
 os.environ["GRPC_VERBOSITY"] = "NONE"
 os.environ["GRPC_TRACE"] = "NONE"
 
-def check_api_key(api_name:str) -> None:
-    """환경변수에 API가 있는지 확인하는 함수
-
-    Args:
-        api_name (str): 확인할 API KEY의 key 값
-    """
-    load_dotenv()
-
-    if api_name not in os.environ:
-        print(f"{api_name} 정보가 없습니다. 확인 후 환경변수에 등록해주세요.")
 
 async def simple_chat(input:str) -> None:
     prompt = PromptTemplate.from_template("{input}에 대해 한국어로 5줄로 설명해줘")
@@ -117,7 +108,8 @@ class GeminiChain:
         # 모델 설정
         model = ChatGoogleGenerativeAI(
             model=self.model_name,
-            temperature=self.temperature
+            temperature=self.temperature,
+            google_api_key=settings.google_api_key
         )
 
         # 출력 파서 설정
