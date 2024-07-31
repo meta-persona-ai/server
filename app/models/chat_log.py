@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger, Sequence, event
+from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger, Sequence, event, text
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import relationship
-import enum
+from enum import Enum as PyEnum
 
 from ..db.database import Base
 
 
-class ChatTypeEnum(enum.Enum):
+class ChatTypeEnum(PyEnum):
     user = 'user'
     character = 'character'
 
@@ -29,3 +29,10 @@ class ChatLog(Base):
 @event.listens_for(ChatLog, 'before_update')
 def receive_before_update(mapper, connection, target):
     target.updated_at = datetime.now()
+
+@event.listens_for(ChatLog, 'after_insert')
+def after_insert_chat_log_listener(mapper, connection, target):
+    connection.execute(
+        text("UPDATE chats SET last_message_at = :log_create_at WHERE chat_id = :chat_id"),
+        {"log_create_at": target.log_create_at, "chat_id": target.chat_id}
+    )

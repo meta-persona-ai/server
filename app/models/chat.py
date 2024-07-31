@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, BigInteger, event, text
+from sqlalchemy import Column, Integer, ForeignKey, BigInteger, event, text
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.mysql import DATETIME
 
 from ..db.database import Base, SessionLocal
 from ..models.character import Character
@@ -11,7 +12,8 @@ class Chat(Base):
     chat_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     character_id = Column(BigInteger, ForeignKey('characters.character_id'), nullable=False)
-    chat_create_at = Column(DateTime, default=datetime.now)
+    chat_create_at = Column(DATETIME(fsp=3), default=datetime.now, nullable=False)
+    last_message_at = Column(DATETIME(fsp=3), default=datetime.now, nullable=False)
 
     user = relationship("User", back_populates="chats", lazy='selectin')
     character = relationship("Character", back_populates="chats", lazy='selectin')
