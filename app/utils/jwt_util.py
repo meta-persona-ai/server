@@ -54,4 +54,7 @@ def verify_token(token: str) -> TokenData:
     except JWTError:
         logger.error("❌ Token decoding failed. Invalid token.")
         raise credentials_exception
+    except IndexError:
+        logger.error("❌ Token decoding failed. Invalid token.")
+        raise credentials_exception
     return token_data
