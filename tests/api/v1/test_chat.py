@@ -40,8 +40,6 @@ def test_get_my_chats(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
-    print(data)
-    assert False
 
 def test_delete_chat(client: TestClient, db_session: Session):
     """

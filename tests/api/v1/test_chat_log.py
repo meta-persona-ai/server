@@ -25,8 +25,6 @@ def test_get_my_chat(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert len(data) > 0
-    print(data)
-    assert False
 
 def test_delete_chat(client: TestClient):
     """
