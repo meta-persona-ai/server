@@ -85,7 +85,7 @@ class GeminiChain:
             file_text = f"[ERROR] 파일 경로를 찾을 수 없습니다.(INPUT PATH: {filepath})"
         else:
             file_text = file.read_text(encoding="utf-8")
-
+        print(f"file_text: {file_text}")
         return file_text
     
     def _get_prompts(self):

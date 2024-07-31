@@ -33,6 +33,8 @@ class Settings(BaseSettings):
 
     # GEMINI
     google_api_key: str
+    # google_api_key2: str
+    # google_api_key3: str
     
 
     model_config = ConfigDict(

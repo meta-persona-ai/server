@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from ..models.chat import Chat
 from ..schemas.request.chat_request_schema import ChatCreate
@@ -17,7 +18,7 @@ def create_chat(chat: ChatCreate, db: Session):
 
 # select
 def get_chats_by_user_id(user_id: int, db: Session) -> list[Chat]:
-    return db.query(Chat).filter(Chat.user_id == user_id).all()
+    return db.query(Chat).filter(Chat.user_id == user_id).order_by(Chat.last_message_at.desc()).all()
 
 def get_chats_by_chat_id_and_user_id(chat_id: int, user_id: int, db: Session) -> Chat:
     return db.query(Chat).filter(Chat.chat_id == chat_id, Chat.user_id == user_id).first()
