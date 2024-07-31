@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from ..utils import converters
 from ..models.character import Character
 from ..schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
 
@@ -17,13 +16,13 @@ def get_all_characters(db: Session) -> list[Character]:
     return character_crud.get_all_characters(db)
 
 def get_character(character_id: int, user_id: int, db: Session) -> Character:
-    return character_crud.get_character(character_id, user_id, db)
+    character = character_crud.get_character(character_id, user_id, db)
+    if not character:
+        raise HTTPException(status_code=404, detail="Characters not found")
+    return character
 
 def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
-    characters = character_crud.get_characters_by_user_id(user_id, db)
-    if not characters:
-        raise HTTPException(status_code=404, detail="Characters not found")
-    return characters
+    return character_crud.get_characters_by_user_id(user_id, db)
 
 def get_characters_by_rank(limit: int, db: Session) -> list[Character]:
     return character_crud.get_characters_by_rank(limit, db)
