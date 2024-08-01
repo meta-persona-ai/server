@@ -1,11 +1,15 @@
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from ..crud import default_image_crud
 from ..schemas.request.default_image_request_schema import DefaultImageCreate, DefaultImageUpdate
+from ..utils.s3_util import upload_to_s3
 
 class DefaultImageService:
-    @staticmethod
-    def create_image(image: DefaultImageCreate, db: Session):
+    @staticmethod    
+    async def create_image(image_name: str, image_file: UploadFile, db: Session):
+        image_url = await upload_to_s3(image_file)
+        image = DefaultImageCreate(image_name=image_name, image_url=image_url)
         return default_image_crud.create_image(image, db)
 
     @staticmethod
