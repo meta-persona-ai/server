@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 
 from ..core.logger_config import setup_logger
 from ..core.env_config import settings
-from ..models.user import User
+from ..models.users import User
 
 
 logger = setup_logger()

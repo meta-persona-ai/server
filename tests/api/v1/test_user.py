@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy.orm import Session
-from app.models.user import User
+from app.models.users import User
 
 from tests.get_token import get_token
 

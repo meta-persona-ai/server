@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 import pytest
 
-from app.models.character import Character
+from app.models.characters import Character
 
 from tests.get_token import get_token
 

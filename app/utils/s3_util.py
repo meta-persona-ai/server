@@ -1,8 +1,8 @@
 from fastapi import UploadFile
 import boto3
 from botocore.exceptions import NoCredentialsError
-from datetime import datetime
 import os
+import uuid
 
 from ..core.logger_config import setup_logger
 from ..core.env_config import settings
@@ -23,9 +23,11 @@ s3 = boto3.client('s3',
 async def upload_to_s3(file: UploadFile, object_name=None):
     file_extension = os.path.splitext(file.filename)[1]
 
+    unique_id = uuid.uuid4()
+    object_name = f"{unique_id}{file_extension}"
+
     if object_name is None:
-        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        object_name = f"{current_time}{file_extension}"
+        object_name = f"{unique_id}_{object_name}{file_extension}"
 
     try:
         file_contents = await file.read()

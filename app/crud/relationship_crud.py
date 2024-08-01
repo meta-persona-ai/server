@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ..models.relationship import Relationship
+from ..models.relationships import Relationship
 from ..schemas.request.relationship_request_schema import RelationshipCreate, RelationshipUpdate
 
 

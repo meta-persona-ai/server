@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from ..models.character import Character
+from ..models.characters import Character
 from ..schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
 
 from ..crud import character_crud

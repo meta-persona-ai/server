@@ -1,4 +1,4 @@
-from ..models.character import Character
+from ..models.characters import Character
 from ..schemas.schemas import CharacterSchema
 from ..schemas.request.character_request_schema import CharacterCreate
 
