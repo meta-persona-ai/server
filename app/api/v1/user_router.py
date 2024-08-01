@@ -27,7 +27,7 @@ async def read_users(db: Session = Depends(get_db)):
             response_model=UserResponse
             )
 async def read_current_user(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     user = user_service.get_user_by_id(payload.id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -38,7 +38,7 @@ async def read_current_user(authorization: str = Depends(api_key_header), db: Se
                response_model=MessageResponse
                )
 async def delete_current_user(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     success = user_service.delete_user_by_id(payload.id, db)
     if not success:
         raise HTTPException(status_code=404, detail="User not found")
@@ -49,7 +49,7 @@ async def delete_current_user(authorization: str = Depends(api_key_header), db: 
             response_model=MessageResponse
             )
 async def update_current_user(user_update: UserUpdate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     updated_user = user_service.update_user_by_id(payload.id, user_update, db)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -60,7 +60,7 @@ async def update_current_user(user_update: UserUpdate, authorization: str = Depe
             response_model=MessageResponse
             )
 async def deactivate_current_user(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     deactivated_user = user_service.deactivate_user_by_id(payload.id, db)
     if not deactivated_user:
         raise HTTPException(status_code=404, detail="User not found")

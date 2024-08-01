@@ -1,6 +1,8 @@
 from fastapi.testclient import TestClient
 import pytest
 
+from tests.get_token import get_token
+
 @pytest.fixture
 def client(client: TestClient) -> TestClient:
     return client
@@ -11,11 +13,7 @@ def test_get_my_chat(client: TestClient):
     이 테스트는 /api/v1/chat/me 엔드포인트와 /api/v1/chat-log/me/{chatId} 엔드포인트를 호출하여 
     현재 로그인한 사용자의 채팅과 해당 채팅의 로그를 조회하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
     
     response = client.get(f"/api/v1/chat/me/", headers=headers)
     assert response.status_code == 200
@@ -31,11 +29,7 @@ def test_delete_chat(client: TestClient):
     채팅 로그 삭제 테스트.
     이 테스트는 /api/v1/chat-log/{chatId} 엔드포인트를 호출하여 특정 채팅 로그를 삭제하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.get(f"/api/v1/chat/me/", headers=headers)
     assert response.status_code == 200
