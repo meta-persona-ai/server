@@ -3,6 +3,8 @@ import pytest
 from sqlalchemy.orm import Session
 from app.models.user import User
 
+from tests.get_token import get_token
+
 @pytest.fixture
 def client(client: TestClient) -> TestClient:
     return client
@@ -23,11 +25,7 @@ def test_read_current_user(client: TestClient):
     현재 로그인한 사용자 정보 조회 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 조회하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.get(f"/api/v1/user/me", headers=headers)
     assert response.status_code == 200
@@ -40,11 +38,7 @@ def test_update_current_user(client: TestClient):
     현재 로그인한 사용자 정보 업데이트 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 업데이트하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.put(
         f"/api/v1/user/me",
@@ -55,20 +49,46 @@ def test_update_current_user(client: TestClient):
     data = response.json()
     assert data["message"] == "User updated successfully"
 
+def test_update_current_user2(client: TestClient, db_session: Session):
+    headers = get_token(client)
+
+    gender = "other"
+    birthdate = "1990-01-01T00:00:00"
+
+    response = client.put(
+        f"/api/v1/user/me",
+        json={"userGender": gender, "userBirthdate": birthdate},
+        headers=headers
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "User updated successfully"
+
+    response = client.get(f"/api/v1/user/me", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['userGender'] == gender
+    assert data['userBirthdate'] == birthdate
+
 def test_deactivate_user(client: TestClient, db_session: Session):
     """
     사용자 비활성화 테스트.
     이 테스트는 /api/user/me/deactivate 엔드포인트를 호출하여 현재 로그인한 사용자를 비활성화하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
+    headers = get_token(client)
 
-    headers = {"Authorization": f"Bearer {test_token}"}
+    response = client.get(f"/api/v1/user/me", headers=headers)
+    assert response.status_code == 200
+    user_id = response.json()['userId']
 
     response = client.put(f"/api/v1/user/me/deactivate", headers=headers)
     assert response.status_code == 200
 
-    test_user = db_session.query(User).filter(User.user_email == "test@example.com").first()
+    test_user = db_session.query(User).filter(User.user_id == user_id).first()
     db_session.refresh(test_user)
     assert test_user.user_is_active == False
+
+    headers = get_token(client)
+    users = db_session.query(User).all()
+    user_list = [[user.user_name, user.user_email, user.user_is_active] for user in users]
+    assert user_list[-1][1] == 'test@example.com'

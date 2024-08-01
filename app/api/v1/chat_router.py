@@ -20,7 +20,7 @@ api_key_header = APIKeyHeader(name="Authorization")
             response_model=MessageResponse
             )
 async def create_chat(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     character = character_service.get_characters_by_id(payload.id, db)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
@@ -33,7 +33,7 @@ async def create_chat(character_id: int, authorization: str = Depends(api_key_he
             response_model=list[ChatResponse]
             )
 async def get_my_chat(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     return chat_service.get_chats_by_user_id(payload.id, db)
 
 @router.delete("/{chat_id}",
@@ -41,6 +41,6 @@ async def get_my_chat(authorization: str = Depends(api_key_header), db: Session 
                response_model=MessageResponse
                )
 async def delete_chat(chat_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     success = chat_service.delete_chat_by_id(chat_id, payload.id, db)
     return {"message": "Chat deleted successfully"} if success else {"message": "Chat deletion failed"}
