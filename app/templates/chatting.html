@@ -30,7 +30,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    token = data.jwtToken;
+                    token = data.accessToken;
                     document.getElementById('tokenDisplay').textContent = token;  // 화면에 토큰 출력
                 })
                 .catch(error => {

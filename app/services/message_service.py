@@ -1,49 +1,51 @@
 from sqlalchemy.orm import Session
 import asyncio
-from google.api_core.exceptions import InternalServerError
+from google.api_core.exceptions import InternalServerError, ServiceUnavailable
 
 from app.core.logger_config import setup_logger
 from app.utils.socket_connection_manager import ConnectionManager
-from app.schemas.request.chat_log_request_schema import ChatLogCreate
 from app.schemas.chatting_schema import CharacterMessage
-from app.schemas.schemas import CharacterSchema
-from app.services import chat_log_service
 
-from app.utils.langchain import GeminiChain
+from app.utils.langchain import Gemini
 from app.utils import const
+from ..models.chats import Chat
+from ..schemas.chatting_schema import UserMessage
+from ..schemas.bot_schema import UserSchema, CharacterSchema, ChatLogSchema
+
+from ..utils.socket_handler import create_log_message, insert_message
 
 
 logger = setup_logger()
 
 async def echo_message(
         room: ConnectionManager, 
-        chat_log: ChatLogCreate, 
-        character_schema: CharacterSchema, 
+        gemini: Gemini,
+        chat: Chat, 
+        user_message: UserMessage, 
         response_id: int, 
-        db: Session, 
-        max_retries: int = const.MAX_RETRIES, 
-        retry_delay: int = const.RETRY_DELAY
+        db: Session
         ):
-    """
-    사용자 메시지를 처리하고 봇의 응답을 생성 및 방송합니다.
 
-    Args:
-        room (ConnectionManager): 연결된 클라이언트 관리 객체.
-        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
-        character_schema (CharacterSchema): 캐릭터 스키마 객체.
-        response_id (int): 응답 ID.
-        db (Session): 데이터베이스 세션 객체.
-        max_retries (int): 최대 재시도 횟수. 기본값은 3입니다.
-        retry_delay (int): 재시도 사이의 대기 시간(초). 기본값은 1초입니다.
-    """ 
-    user_log_message = create_log_message("User", chat_log)
+    await insert_message(chat, user_message.type, user_message.message, db)
+
+    user_log_message = create_log_message("User", chat.chat_id, chat.user.user_name, user_message.message)
+    logger.info(user_log_message)
+
+    # output = await generate_bot_response(room, gemini, user_message.message, chat.character.character_name, response_id)
+    output = await exception_handler(
+        generate_bot_response, room, gemini, user_message.message, chat.character.character_name, response_id
+    )
+    gemini.add_history(user_message.message, output)
+    await insert_message(chat, "character", output, db)
+    
+    user_log_message = create_log_message("Bot", chat.chat_id, chat.user.user_name, output)
     logger.info(user_log_message)
     
-    await insert_user_message(chat_log, db)
-
+async def exception_handler(func, *args, max_retries: int = const.MAX_RETRIES, retry_delay: int = const.RETRY_DELAY):
+    response_message = ""
     for attempt in range(max_retries):
         try:
-            response_message = await generate_bot_response(room, chat_log, character_schema, response_id)
+            response_message = await func(*args)
             break
         except InternalServerError as e:
             if attempt < max_retries - 1:
@@ -52,117 +54,50 @@ async def echo_message(
             else:
                 logger.error(f"InternalServerError: {e}. All {max_retries} attempts failed.")
                 response_message = "Sorry, I'm having trouble processing your request right now. Please try again later."
+        except ServiceUnavailable as e:
+            if attempt < max_retries - 1:
+                logger.warning(f"ServiceUnavailable: {e}. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                await asyncio.sleep(retry_delay)
+            else:
+                logger.error(f"ServiceUnavailable: {e}. All {max_retries} attempts failed.")
+                response_message = "The service is currently unavailable. Please try again later."
     
-    await insert_bot_message(chat_log, response_message, db)
-    
-    bot_log_message = create_log_message("Bot", chat_log, response_message)
-    logger.info(bot_log_message)
+    return response_message
 
-async def insert_user_message(chat_log: ChatLogCreate, db: Session):
-    """
-    사용자 메시지를 데이터베이스에 저장합니다.
-
-    Args:
-        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
-        db (Session): 데이터베이스 세션 객체.
-    """
-    chat_log_service.create_chat_log(chat_log, db)
-
-async def generate_bot_response(room: ConnectionManager, chat_log: ChatLogCreate, character_schema: CharacterSchema, response_id: int):
-    """
-    봇의 응답 메시지를 생성하고 클라이언트에 방송합니다.
-
-    Args:
-        room (ConnectionManager): 연결된 클라이언트 관리 객체.
-        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
-        character_schema (CharacterSchema): 캐릭터 스키마 객체.
-        response_id (int): 응답 ID.
-
-    Returns:
-        str: 생성된 봇 응답 메시지.
-    """
-    chain = GeminiChain()
-    inputs = chain.inputs
-    inputs["input"] = chat_log.contents
-
+async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs: str, character_name: str, response_id: int):
     output = ""
-    result = chain.chain.astream(inputs)
-    async for token in result:
-        for char in token:
-            response = {
+    async for char in gemini.astream_yield(inputs):
+        output += char
+        response = {
                 "type": "character",
-                "character_name": character_schema.character_name,
+                "character_name": character_name,
                 "response_id": response_id,
                 "character": char
             }
-            response_data = CharacterMessage(**response).model_dump_json()
-            await room.broadcast(response_data)
-            await asyncio.sleep(0.02)
-
-        output += token 
+        response_data = CharacterMessage(**response).model_dump_json()
+        await room.broadcast(response_data)
 
     return output
 
-async def insert_bot_message(chat_log: ChatLogCreate, response_message: str, db: Session):
-    """
-    봇의 응답 메시지를 데이터베이스에 저장합니다.
+def data_converter(chat: Chat) -> tuple[dict[str, object], dict[str, object], list[dict[str, str]]]:
+    user = UserSchema.model_validate(chat.user)
+    character = CharacterSchema.model_validate(chat.character)
+    chat_logs = [ChatLogSchema.model_validate(log) for log in chat.chat_logs]
 
-    Args:
-        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
-        response_message (str): 생성된 봇 응답 메시지.
-        db (Session): 데이터베이스 세션 객체.
-    """
-    chat_log.role = "character"
-    chat_log.contents = response_message
-    chat_log_service.create_chat_log(chat_log, db)
+    user_info = {
+        "user_name": user.user_name,
+        "user_birthdate": user.user_birthdate,
+        "user_gender": user.user_gender
+    }
 
-async def log_insert_data(chat_id: int, user_id: int, character_id: int, role: str, contents: str) -> ChatLogCreate:
-    """
-    로그 데이터를 생성합니다.
+    character_info = {
+        "character_name": character.character_name,
+        "character_gender": character.character_gender,
+        "character_personality": character.character_personality,
+        "character_details": character.character_details,
+        "relation_type": ", ".join([c.relationship.relationship_name for c in character.character_relationships])
+    }
 
-    Args:
-        chat_id (int): 채팅 ID.
-        user_id (int): 사용자 ID.
-        character_id (int): 캐릭터 ID.
-        role (str): 메시지의 역할 (사용자 또는 캐릭터).
-        contents (str): 메시지 내용.
+    chat_history = [{"role": log.role, "content": log.contents} for log in chat_logs]
 
-    Returns:
-        ChatLogCreate: 생성된 채팅 로그 데이터 객체.
-    """
-    return ChatLogCreate(
-        chat_id=chat_id,
-        user_id=user_id,
-        character_id=character_id,
-        role=role,
-        contents=contents
-    )
-
-def create_log_message(message_type: str, chat_log: ChatLogCreate, response_message: str = None, max_length: int = 100) -> str:
-    """
-    로그 메시지를 생성합니다.
-
-    Args:
-        message_type (str): 메시지 타입 (User 또는 Bot).
-        chat_log (ChatLogCreate): 채팅 로그 데이터 객체.
-        response_message (str): 봇의 응답 메시지 (옵션).
-        max_length (int): 메시지의 최대 길이.
-
-    Returns:
-        str: 생성된 로그 메시지.
-    """
-    contents = chat_log.contents.replace('\n', ' ')
-    if len(contents) > max_length:
-        contents = contents[:max_length] + "..."
-    
-    if message_type == "User":
-        return f"▶️  User message received: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, contents: {contents}"
-    
-    if message_type == "Bot":
-        if response_message:
-            response_message = response_message.replace('\n', ' ')
-            if len(response_message) > max_length:
-                response_message = response_message[:max_length] + "..."
-        return f"▶️  Bot response sent: chat_id: {chat_log.chat_id}, user_id: {chat_log.user_id}, response_message: {response_message}"
-    
-    return ""
+    return user_info, character_info, chat_history

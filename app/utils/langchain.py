@@ -1,10 +1,10 @@
-import os 
-from pathlib import Path
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import AIMessage,HumanMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain.memory import ConversationBufferMemory
+from pathlib import Path
+import asyncio
+import os 
 
 from ..core.env_config import settings
 
@@ -28,49 +28,51 @@ async def simple_chat(input:str) -> None:
     return result
 
 
-class GeminiChain:
-    def __init__(self, user_info=None, character_info=None, chat_logs=None) -> None:
-        self.user_info = user_info
-        self.character_info = character_info
-        self.chat_logs = chat_logs
-
+class Gemini:
+    def __init__(
+        self,
+        user_info=None,
+        character_info=None,
+        chat_history=None
+    ) -> None:
+        
         # 입력값에 대한 변수
-        self.inputs = self._get_inputs()
-        self.memory = ConversationBufferMemory(
-            return_messages=True, 
-            memory_key="chat_history"
-        )
-
+        self.inputs = self._get_inputs(user_info, character_info, chat_history)
+        
         # 체인에 대한 변수
         self.template_path = "./static/templates/Demo.prompt"
-        self.model_name = "gemini-1.5-pro"
+        self.model_name = "gemini-1.5-flash"
         self.temperature = 0.7
         self.chain = self._make_chain()
 
-    def _get_inputs(self):
+    def _get_inputs(self, user_info, character_info, chat_history):
+        """input_data들을 하나의 딕셔너리로 바꾸는 메서드"""
         inputs = {
-            "user_info": self.user_info,
-            "character_info" : self.character_info,
-            "chat_history": self._get_chat_logs(self.chat_logs)
+            "user_info": user_info,
+            "character_info" : character_info,
+            "chat_history": self._wrap_message(chat_history)
         }
 
         return inputs
-
-    def _get_chat_logs(self, chat_logs):
-        if not chat_logs:
+    
+    def _wrap_message(self, chat_history):
+        """chat_history에 Message 객체 씌우는 메서드"""
+        if not chat_history:
             return []
 
-        chat_history = []
-        for log in chat_logs:
+        chat_messages = []
+        for log in chat_history:
             if log["role"] == "user":
-                chat = HumanMessage(log["contents"])
+                chat = HumanMessage(log["content"])
             else:
-                chat = AIMessage(log["contents"])
+                chat = AIMessage(log["content"])
             
-        return chat_history.append(chat)
+            chat_messages.append(chat)
+        
+        return chat_messages
     
     @staticmethod
-    def read_prompt(filepath:str) -> str:
+    def read_template(filepath:str) -> str:
         """프롬프트 파일을 읽고 텍스트로 반환하는 함수
 
         Args:
@@ -85,12 +87,12 @@ class GeminiChain:
             file_text = f"[ERROR] 파일 경로를 찾을 수 없습니다.(INPUT PATH: {filepath})"
         else:
             file_text = file.read_text(encoding="utf-8")
-        print(f"file_text: {file_text}")
+
         return file_text
     
     def _get_prompts(self):
-        # 프롬프트 설정
-        template = self.read_prompt(self.template_path)
+        """프롬프트 객체 만드는 메서드"""
+        template = self.read_template(self.template_path)
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", template),
@@ -102,7 +104,7 @@ class GeminiChain:
         return prompt
     
     def _make_chain(self):
-        # 프롬프트 설정
+        """Chain 만드는 메서드"""
         prompt = self._get_prompts()
 
         # 모델 설정
@@ -120,25 +122,20 @@ class GeminiChain:
 
         return chain
 
-    def _save_memory(self, input, output):
-            self.memory.save_context(
-            {"inputs": input},
-            {"output": output}
-        )
+    def add_history(self, input, output):
+        self.inputs["chat_history"].extend(
+        [
+            HumanMessage(content=input),
+            AIMessage(content=output)
+        ]
+    )
 
-    async def astream(self, input):
+    async def astream_yield(self, input):
         self.inputs["input"] = input
 
-        output = ""
         result = self.chain.astream(self.inputs)
         async for token in result:
-            output += token 
-            # 소켓 통신 코드 
-            # 테스트 코드
-            print(token, end="", flush=True)
-        
-        # 메모리에 저장
-        self._save_memory(input, output)
-        
-        return output
-        
+            # 한글자씩 스트리밍
+            for char in token:
+                await asyncio.sleep(0.02)
+                yield char
