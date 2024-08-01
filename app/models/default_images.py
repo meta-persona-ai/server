@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 
 from ..db.database import Base
 
-class Relationship(Base):
+class DefaultImages(Base):
     __tablename__ = "default_images"
 
     image_id = Column(Integer, primary_key=True, autoincrement=True)

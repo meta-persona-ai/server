@@ -35,10 +35,12 @@ async def upload_to_s3(file: UploadFile, object_name=None):
 
         file_url = f"https://{BUCKET_NAME}.s3.{REGION_NAME}.amazonaws.com/{object_name}"
 
+        logger.info(f"✅ File '{file.filename}' uploaded successfully as '{object_name}'. URL: {file_url}")
+
         return file_url
     except NoCredentialsError:
-        logger.error("Credentials not available. Please check your AWS credentials.")
+        logger.error("❌ Credentials not available. Please check your AWS credentials.")
         return None
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"❌ An error occurred: {e}")
         return None
