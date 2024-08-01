@@ -20,7 +20,7 @@ api_key_header = APIKeyHeader(name="Authorization")
             response_model=CharacterCreateResponse
             )
 async def create_character(character: CharacterCreate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     character = character_service.create_character(character, payload.id, db)
     return {"character_id": character.character_id, "message": "Character created successfully"}
 
@@ -36,7 +36,7 @@ async def get_all_characters(db: Session = Depends(get_db)):
             response_model=CharacterResponse
             )
 async def get_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     return character_service.get_character(character_id, payload.id, db)
 
 @router.get("/me/",
@@ -44,7 +44,7 @@ async def get_character(character_id: int, authorization: str = Depends(api_key_
             response_model=list[CharacterResponse]
             )
 async def get_my_characters(authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     return character_service.get_characters_by_id(payload.id, db)
 
 @router.get("/rank/",
@@ -59,7 +59,7 @@ async def get_characters_by_rank(db: Session = Depends(get_db)):
             response_model=MessageResponse
             )
 async def update_character(character_id: int, character_update: CharacterUpdate, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     success = character_service.update_character_by_id(character_id, character_update, payload.id, db)
     return {"message": "Character updated successfully"} if success else {"message": "Character update failed"}
 
@@ -67,7 +67,7 @@ async def update_character(character_id: int, character_update: CharacterUpdate,
             response_model=MessageResponse
             )
 async def deactivate_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     deactivated_user = character_service.deactivate_character_by_id(character_id, payload.id, db)
     return {"message": "Character deactivated successfully"} if deactivated_user else {"message": "Character deactivation failed"}
 
@@ -76,6 +76,6 @@ async def deactivate_character(character_id: int, authorization: str = Depends(a
                response_model=MessageResponse
                )
 async def delete_character(character_id: int, authorization: str = Depends(api_key_header), db: Session = Depends(get_db)):
-    payload = jwt_util.decode_token(authorization)
+    payload = jwt_util.verify_token(authorization)
     success = character_service.delete_character_by_id(character_id, payload.id, db)
     return {"message": "Character deleted successfully"} if success else {"message": "Character deletion failed"}

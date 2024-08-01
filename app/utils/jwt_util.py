@@ -1,13 +1,15 @@
 from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
+from pydantic import BaseModel
 from jose import JWTError, jwt
 
+from ..core.logger_config import setup_logger
 from ..core.env_config import settings
 from ..models.user import User
-from pydantic import BaseModel
 
 
-# load_dotenv()
+logger = setup_logger()
+
 JWT_SECRET = settings.jwt_secret
 JWT_ALGORITHM = settings.jwt_algorithm
 
@@ -34,6 +36,7 @@ def make_access_token(user: User) -> str:
 
 def decode_token(authorization: str) -> TokenData:
     token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
+    logger.warning(f"⚠️ {token}")
     payload = TokenData(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
     return payload
 
@@ -44,9 +47,14 @@ def verify_token(token: str) -> TokenData:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         user_id: str = payload.get("id")
         if user_id is None:
+            logger.error("❌ User ID is missing in token payload.")
             raise credentials_exception
         
         token_data = TokenData(**payload)
     except JWTError:
+        logger.error("❌ Token decoding failed. Invalid token.")
+        raise credentials_exception
+    except IndexError:
+        logger.error("❌ Token decoding failed. Invalid token.")
         raise credentials_exception
     return token_data
