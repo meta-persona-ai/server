@@ -18,20 +18,26 @@ def auth_google_id_token(id_token: str, db: Session):
     if not user:
         raise HTTPException(status_code=401, detail="id token is not valid")
 
-    return sign_in_or_login(user, db)
-
-
-def sign_in_or_login(user: UserCreate, db: Session):
     existing_user = user_service.get_user_by_email(user.user_email, db)
     if existing_user:
         db_user = existing_user
+        status = "success"
+        message = "Login successful."
     else:
         db_user = auth_crud.create_user(user, db)
+        status = "registration"
+        message = "User not found. Please complete the registration process."
         logger.info(f"📌 successfully sign in - id: {db_user.user_id}, name: {db_user.user_name}, email: {db_user.user_email}")
 
     logger.info(f"📌 login complete! - id: {db_user.user_id}, name: {db_user.user_name}")
 
-    return jwt_util.make_access_token(db_user)
+    response = {
+        "status": status,
+        "message": message,
+        "user": db_user,
+        "access_token": jwt_util.make_access_token(db_user)
+    }
+    return response
 
 
 def make_test_access_token(db: Session):
@@ -41,11 +47,21 @@ def make_test_access_token(db: Session):
 
     if existing_user:
         db_user = existing_user
+        status = "success"
+        message = "Login successful."
     else:
         test_user = UserCreate(user_email=test_email, user_password="test", user_name="Test User", user_profile="test.jpg")
         db_user = auth_crud.create_user(test_user, db)
+        status = "registration"
+        message = "User not found. Please complete the registration process."
 
-    return jwt_util.make_access_token(db_user)
+    response = {
+        "status": status,
+        "message": message,
+        "user": db_user,
+        "access_token": jwt_util.make_access_token(db_user)
+    }
+    return response
 
 
 def decode_token(authorization: str) -> UserSchema:

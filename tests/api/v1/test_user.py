@@ -25,11 +25,7 @@ def test_read_current_user(client: TestClient):
     현재 로그인한 사용자 정보 조회 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 조회하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.get(f"/api/v1/user/me", headers=headers)
     assert response.status_code == 200
@@ -42,11 +38,7 @@ def test_update_current_user(client: TestClient):
     현재 로그인한 사용자 정보 업데이트 테스트.
     이 테스트는 /api/user/me 엔드포인트를 호출하여 현재 로그인한 사용자의 정보를 업데이트하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.put(
         f"/api/v1/user/me",
@@ -83,11 +75,7 @@ def test_deactivate_user(client: TestClient, db_session: Session):
     사용자 비활성화 테스트.
     이 테스트는 /api/user/me/deactivate 엔드포인트를 호출하여 현재 로그인한 사용자를 비활성화하는지 확인합니다.
     """
-    response = client.post("/api/v1/auth/token/test")
-    assert response.status_code == 200
-    test_token = response.json().get("jwtToken")
-
-    headers = {"Authorization": f"Bearer {test_token}"}
+    headers = get_token(client)
 
     response = client.put(f"/api/v1/user/me/deactivate", headers=headers)
     assert response.status_code == 200

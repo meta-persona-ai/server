@@ -23,7 +23,6 @@ class TokenData(BaseModel):
     id: int
     email: str
     name: str
-    picture: str | None = None
 
 def make_access_token(user: User) -> str:
     return jwt.encode({
@@ -35,7 +34,7 @@ def make_access_token(user: User) -> str:
 
 
 def decode_token(authorization: str) -> TokenData:
-    token = authorization.split(" ")[1]  # "Bearer " 부분을 제거
+    token = authorization.split(" ")[1]
     logger.warning(f"⚠️ {token}")
     payload = TokenData(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
     return payload
