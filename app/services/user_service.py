@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from ..crud import user_crud
-from ..models.user import User
+from ..models.users import User
 from ..schemas.request.user_request_schema import UserUpdate
 
 

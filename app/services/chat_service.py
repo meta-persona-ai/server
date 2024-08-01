@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from ..crud import chat_crud
-from ..models.chat import Chat
+from ..models.chats import Chat
 from ..schemas.request.chat_request_schema import ChatCreate
 
 
@@ -13,9 +13,7 @@ def create_chat(chat: ChatCreate, db: Session):
 # select
 def get_chats_by_user_id(user_id: int, db: Session) -> list[Chat]:
     chats = chat_crud.get_chats_by_user_id(user_id, db)
-    if not chats:
-        raise HTTPException(status_code=404, detail="Chats not found")
-
+    
     for idx in range(len(chats)):
         if len(chats[idx].chat_logs) > 0:
             chats[idx].chat_logs = [chats[idx].chat_logs[-1]]

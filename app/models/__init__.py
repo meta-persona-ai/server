@@ -1,6 +1,6 @@
-from .character import Character, CharacterGenderEnum
-from .user import User
-from .relationship import Relationship
-from .character_relationship import CharacterRelationship
-from .chat_log import ChatLog
-from .chat import Chat
+from .characters import Character, CharacterGenderEnum
+from .users import User
+from .relationships import Relationship
+from .character_relationships import CharacterRelationship
+from .chat_logs import ChatLog
+from .chats import Chat

@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy.orm import Session
-from app.models.character import Character
-from app.models.chat import Chat
+from app.models.characters import Character
+from app.models.chats import Chat
 
 from tests.get_token import get_token
 

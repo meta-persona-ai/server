@@ -1,8 +1,8 @@
 from fastapi import UploadFile
 import boto3
 from botocore.exceptions import NoCredentialsError
-from datetime import datetime
 import os
+import uuid
 
 from ..core.logger_config import setup_logger
 from ..core.env_config import settings
@@ -23,9 +23,11 @@ s3 = boto3.client('s3',
 async def upload_to_s3(file: UploadFile, object_name=None):
     file_extension = os.path.splitext(file.filename)[1]
 
+    unique_id = uuid.uuid4()
+    object_name = f"{unique_id}{file_extension}"
+
     if object_name is None:
-        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        object_name = f"{current_time}{file_extension}"
+        object_name = f"{unique_id}_{object_name}{file_extension}"
 
     try:
         file_contents = await file.read()
@@ -33,10 +35,12 @@ async def upload_to_s3(file: UploadFile, object_name=None):
 
         file_url = f"https://{BUCKET_NAME}.s3.{REGION_NAME}.amazonaws.com/{object_name}"
 
+        logger.info(f"✅ File '{file.filename}' uploaded successfully as '{object_name}'. URL: {file_url}")
+
         return file_url
     except NoCredentialsError:
-        logger.error("Credentials not available. Please check your AWS credentials.")
+        logger.error("❌ Credentials not available. Please check your AWS credentials.")
         return None
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"❌ An error occurred: {e}")
         return None

@@ -1,7 +1,7 @@
 from fastapi_camelcase import CamelModel
 from datetime import datetime
 
-from app.models.user import Gender
+from app.models.users import Gender
 
 class UserCreate(CamelModel):
     user_id: int | None = None
