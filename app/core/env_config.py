@@ -35,7 +35,11 @@ class Settings(BaseSettings):
     google_api_key: str
     # google_api_key2: str
     # google_api_key3: str
-    
+
+    # LANGCHAIN
+    langchain_api_key: str
+    langchain_tracing_v2: bool
+    langchain_project: str
 
     model_config = ConfigDict(
         env_file=".env",
