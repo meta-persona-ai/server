@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from app.core.swagger_config import SwaggerConfig
 from app.db import database
 from app.db.initial_data import DatabaseInitializer
-from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router, chat_log_router, chatting_router
+from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router, chat_log_router, chatting_router, default_image_router
 
 
 @asynccontextmanager
@@ -48,6 +48,7 @@ app.include_router(character_router.router)
 app.include_router(chat_router.router)
 app.include_router(chat_log_router.router)
 app.include_router(chatting_router.router)
+app.include_router(default_image_router.router)
 app.include_router(etc_router.router)
 
 

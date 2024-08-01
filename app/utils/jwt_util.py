@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 
 from ..core.logger_config import setup_logger
 from ..core.env_config import settings
-from ..models.user import User
+from ..models.users import User
 
 
 logger = setup_logger()
@@ -45,7 +45,7 @@ def verify_token(token: str) -> TokenData:
     except JWTError:
         logger.error("❌ Token decoding failed. Invalid token.")
         raise credentials_exception
-    except IndexError:
-        logger.error("❌ Token decoding failed. Invalid token.")
+    except Exception as e:
+        logger.error(f"❌ An error occurred: {e}")
         raise credentials_exception
     return token_data

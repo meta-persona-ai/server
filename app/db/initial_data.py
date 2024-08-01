@@ -2,8 +2,8 @@ import yaml
 from sqlalchemy.orm import Session
 
 # from ..schemas import schemas
-from ..schemas.request import chat_request_schema, chat_log_request_schema, user_request_schema, relationship_request_schema, character_request_schema
-from ..crud import auth_crud, user_crud, character_crud, chat_crud, chat_log_crud, relationship_crud
+from ..schemas.request import chat_request_schema, chat_log_request_schema, user_request_schema, relationship_request_schema, character_request_schema, default_image_request_schema
+from ..crud import auth_crud, user_crud, character_crud, chat_crud, chat_log_crud, relationship_crud, default_image_crud
 
 class DatabaseInitializer:
     def __init__(self, engine, data_file='example_data.yaml'):
@@ -20,6 +20,7 @@ class DatabaseInitializer:
         self._init_characters(db, data['characters'])
         self._init_chats(db, data['chats'])
         self._init_chat_logs(db, data['chat_logs'])
+        self._init_default_images(db, data['default_images'])
 
         db.close()
 
@@ -95,3 +96,14 @@ class DatabaseInitializer:
             )
 
             chat_log_crud.create_chat_log(chat_log, db)
+
+    def _init_default_images(self, db: Session, default_images):
+        for default_image in default_images:
+            init_image = default_image_request_schema.DefaultImageCreate(
+                image_name=default_image["image_name"],
+                image_url=default_image["image_url"]
+            )
+
+            existing_relationship = default_image_crud.get_default_images_by_name(default_image['image_name'], db)
+            if not existing_relationship:
+                default_image_crud.create_image(init_image, db)

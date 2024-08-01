@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile
 from fastapi.responses import HTMLResponse
 import os
 
@@ -24,9 +24,17 @@ async def upload_file(file: UploadFile):
     return {"url": url}
 
 @router.get("/chatting", response_class=HTMLResponse)
-async def serve_homepage():
+async def serve_chatting():
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     file_path = os.path.join(project_root, "app", "templates", "chatting.html")
+    with open(file_path, "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content)
+
+@router.get("/image", response_class=HTMLResponse)
+async def serve_image():
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    file_path = os.path.join(project_root, "app", "templates", "image_view.html")
     with open(file_path, "r", encoding="utf-8") as file:
         html_content = file.read()
     return HTMLResponse(content=html_content)

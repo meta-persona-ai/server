@@ -3,8 +3,8 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from ..models.character import Character
-from ..models.character_relationship import CharacterRelationship
+from ..models.characters import Character
+from ..models.character_relationships import CharacterRelationship
 from ..schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
 
 # insert
