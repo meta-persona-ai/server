@@ -77,9 +77,18 @@ def test_deactivate_user(client: TestClient, db_session: Session):
     """
     headers = get_token(client)
 
+    response = client.get(f"/api/v1/user/me", headers=headers)
+    assert response.status_code == 200
+    user_id = response.json()['userId']
+
     response = client.put(f"/api/v1/user/me/deactivate", headers=headers)
     assert response.status_code == 200
 
-    test_user = db_session.query(User).filter(User.user_email == "test@example.com").first()
+    test_user = db_session.query(User).filter(User.user_id == user_id).first()
     db_session.refresh(test_user)
     assert test_user.user_is_active == False
+
+    headers = get_token(client)
+    users = db_session.query(User).all()
+    user_list = [[user.user_name, user.user_email, user.user_is_active] for user in users]
+    assert user_list[-1][1] == 'test@example.com'

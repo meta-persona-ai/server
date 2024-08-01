@@ -32,14 +32,6 @@ def make_access_token(user: User) -> str:
         "exp": datetime.now(timezone.utc) + timedelta(hours=1)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-
-def decode_token(authorization: str) -> TokenData:
-    token = authorization.split(" ")[1]
-    logger.warning(f"⚠️ {token}")
-    payload = TokenData(**jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
-    return payload
-
-
 def verify_token(token: str) -> TokenData:
     try:
         token = token.split(" ")[1]  # "Bearer " 부분을 제거

@@ -49,4 +49,3 @@ async def get_user_info_from_token(authorization: str = Depends(api_key_header))
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
-

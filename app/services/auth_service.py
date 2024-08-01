@@ -65,4 +65,4 @@ def make_test_access_token(db: Session):
 
 
 def decode_token(authorization: str) -> UserSchema:
-    return jwt_util.decode_token(authorization)
+    return jwt_util.verify_token(authorization)
