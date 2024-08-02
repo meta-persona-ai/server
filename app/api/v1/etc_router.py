@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile
 from fastapi.responses import HTMLResponse
 import os
 
-from app.utils.s3_util import upload_to_s3
+from ...utils.s3_util import upload_to_s3
 
 
 router = APIRouter(
