@@ -2,8 +2,9 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from ..core.logger_config import setup_logger
+from ..core.security import create_access_token, verify_token
 from ..utils import google_api
-from ..utils import jwt_util
+# from ..utils import jwt_util
 from ..crud import auth_crud
 from ..services import user_service
 from ..schemas.request.user_request_schema import UserCreate
@@ -35,7 +36,7 @@ def auth_google_id_token(id_token: str, db: Session):
         "status": status,
         "message": message,
         "user": db_user,
-        "access_token": jwt_util.make_access_token(db_user)
+        "access_token": create_access_token(db_user.user_id)
     }
     return response
 
@@ -59,10 +60,10 @@ def make_test_access_token(db: Session):
         "status": status,
         "message": message,
         "user": db_user,
-        "access_token": jwt_util.make_access_token(db_user)
+        "access_token": create_access_token(db_user.user_id)
     }
     return response
 
 
 def decode_token(authorization: str) -> UserSchema:
-    return jwt_util.verify_token(authorization)
+    return verify_token(authorization)

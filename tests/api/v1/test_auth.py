@@ -25,7 +25,7 @@ def test_get_user_info_from_token(client: TestClient):
 
     headers = {"Authorization": f"Bearer {test_token}"}
     response = client.get("/api/v1/auth/token", headers=headers)
+
     assert response.status_code == 200
-    assert "email" in response.json()
-    assert "id" in response.json()
-    assert "name" in response.json()
+    assert "userId" in response.json()
+    assert "message" in response.json()

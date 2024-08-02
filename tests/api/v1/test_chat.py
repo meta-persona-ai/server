@@ -44,7 +44,7 @@ def test_delete_chat(client: TestClient, db_session: Session):
 
     user_info = client.get("/api/v1/auth/token", headers=headers).json()
 
-    test_chat = db_session.query(Chat).filter(Chat.user_id == user_info['id']).first()
+    test_chat = db_session.query(Chat).filter(Chat.user_id == user_info['userId']).first()
     
     response = client.delete(f"/api/v1/chat/{test_chat.character_id}", headers=headers)
     assert response.status_code == 200

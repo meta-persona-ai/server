@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 import json
 
 from ..core.logger_config import setup_logger
+from ..core.security import verify_token
 from ..models.users import User
 from ..models.chats import Chat
 from ..utils.socket_room_manager import RoomManager
 from ..utils.socket_connection_manager import ConnectionManager
-from ..utils.jwt_util import verify_token
 from ..schemas.request.chat_log_request_schema import ChatLogCreate
 from ..schemas.chatting_schema import AuthMessage
 from ..services import chat_service, user_service, chat_log_service
