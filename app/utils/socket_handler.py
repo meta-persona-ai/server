@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 import json
 
 from ..core.logger_config import setup_logger
+from ..core.security import verify_token
 from ..models.users import User
 from ..models.chats import Chat
 from ..utils.socket_room_manager import RoomManager
 from ..utils.socket_connection_manager import ConnectionManager
-from ..utils.jwt_util import verify_token
 from ..schemas.request.chat_log_request_schema import ChatLogCreate
 from ..schemas.chatting_schema import AuthMessage
 from ..services import chat_service, user_service, chat_log_service
@@ -36,7 +36,7 @@ async def authenticate_user(websocket: WebSocket, db: Session) -> User:
         raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
     
     try:
-        user_id = verify_token(auth_data.token).id
+        user_id = verify_token(auth_data.token.split(' ')[1])
         user = user_service.get_user_by_id(user_id, db=db)
         return user
     except HTTPException as e:
