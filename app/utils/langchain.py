@@ -1,5 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import AIMessage,HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from pathlib import Path
@@ -7,26 +7,13 @@ import asyncio
 import os 
 
 from ..core.env_config import settings
+from ..core.logger_config import setup_logger
+from . import const
 
+logger = setup_logger()
 
 os.environ["GRPC_VERBOSITY"] = "NONE"
 os.environ["GRPC_TRACE"] = "NONE"
-
-
-async def simple_chat(input:str) -> None:
-    prompt = PromptTemplate.from_template("{input}에 대해 한국어로 5줄로 설명해줘")
-    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
-    output_parser = StrOutputParser()
-    chain = prompt | model | output_parser
-
-    output = chain.astream({"input": input})
-    result = ""
-    async for token in output:
-        result += token
-        print(token, end="", flush=True)
-
-    return result
-
 
 class Gemini:
     def __init__(
@@ -40,9 +27,9 @@ class Gemini:
         self.inputs = self._get_inputs(user_info, character_info, chat_history)
         
         # 체인에 대한 변수
-        self.template_path = "./static/templates/Demo.prompt"
-        self.model_name = "gemini-1.5-flash"
-        self.temperature = 0.7
+        self.template_path = const.TEMPLATE_PATH
+        self.model_name = const.GEMINI_MODEL
+        self.temperature = const.TEMPERATURE
         self.chain = self._make_chain()
 
     def _get_inputs(self, user_info, character_info, chat_history):
@@ -84,7 +71,8 @@ class Gemini:
         file = Path(filepath)
         
         if not file.is_file():
-            file_text = f"[ERROR] 파일 경로를 찾을 수 없습니다.(INPUT PATH: {filepath})"
+            logger.error(f"❌ File path not found: {filepath}")
+            file_text = f"[ERROR] Unable to find the file path. (INPUT PATH: {filepath})"
         else:
             file_text = file.read_text(encoding="utf-8")
 
