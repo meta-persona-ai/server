@@ -4,7 +4,6 @@ from fastapi import HTTPException
 from ..core.logger_config import setup_logger
 from ..core.security import create_access_token, verify_token
 from ..utils import google_api
-# from ..utils import jwt_util
 from ..crud import auth_crud
 from ..services import user_service
 from ..schemas.request.user_request_schema import UserCreate

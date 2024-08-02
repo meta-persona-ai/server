@@ -36,7 +36,7 @@ async def authenticate_user(websocket: WebSocket, db: Session) -> User:
         raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
     
     try:
-        user_id = verify_token(auth_data.token).id
+        user_id = verify_token(auth_data.token.split(' ')[1])
         user = user_service.get_user_by_id(user_id, db=db)
         return user
     except HTTPException as e:

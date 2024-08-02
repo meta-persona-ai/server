@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
@@ -13,7 +12,6 @@ router = APIRouter(
     prefix="/api/v1/characters",
     tags=["Characters"]
 )
-api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
             description="새 캐릭터를 생성하는 API입니다.",

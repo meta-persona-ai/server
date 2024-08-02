@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
@@ -8,12 +7,10 @@ from app.schemas.request.chat_request_schema import ChatCreate
 from app.schemas.response.chat_response_schema import ChatResponse, MessageResponse
 from app.services import chat_service, character_service
 
-
 router = APIRouter(
     prefix="/api/v1/chat",
     tags=["Chat"]
 )
-api_key_header = APIKeyHeader(name="Authorization")
 
 @router.post("/",
             description="새 채팅방을 생성하는 API입니다.",

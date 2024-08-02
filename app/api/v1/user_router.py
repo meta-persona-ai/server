@@ -1,19 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from ...db.database import get_db
 from ...schemas.request.user_request_schema import UserUpdate
 from ...schemas.response.user_response_schema import UserResponse, MessageResponse
 from ...services import user_service
-from app.core.security import get_current_user
+from ...core.security import get_current_user
 
 router = APIRouter(
     prefix="/api/v1/user",
     tags=["User"]
 )
-
-api_key_header = APIKeyHeader(name="Authorization")
 
 @router.get("/",
             description="모든 유저를 조회합니다.",
