@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 import asyncio
 from google.api_core.exceptions import InternalServerError, ServiceUnavailable
 
-from app.core.logger_config import setup_logger
+from app.core import setup_logger
 from app.utils.socket_connection_manager import ConnectionManager
 from app.schemas.chatting_schema import CharacterMessage
 

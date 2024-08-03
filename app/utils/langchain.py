@@ -6,8 +6,7 @@ from pathlib import Path
 import asyncio
 import os 
 
-from ..core.env_config import settings
-from ..core.logger_config import setup_logger
+from ..core import settings, setup_logger
 from . import const
 
 logger = setup_logger()

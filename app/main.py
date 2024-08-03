@@ -1,24 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
 
-from app.core.swagger_config import SwaggerConfig
-from app.db import database
-from app.db.initial_data import DatabaseInitializer
+from app.core import lifespan, SwaggerConfig
 from app.api.v1 import auth_router, user_router, character_router, chat_router, etc_router, chat_log_router, chatting_router, default_image_router, relation_router
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    database.create_database()
-    database.create_schema()
-    database.drop_tables()
-    database.create_tables()
-
-    initializer = DatabaseInitializer(database.engine, data_file='app/resources/init_data.yaml')
-    initializer.init_db()
-
-    yield
 
 swagger_config = SwaggerConfig()
 config = swagger_config.get_config()

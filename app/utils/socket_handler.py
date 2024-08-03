@@ -2,8 +2,7 @@ from fastapi import WebSocket, HTTPException
 from sqlalchemy.orm import Session
 import json
 
-from ..core.logger_config import setup_logger
-from ..core.security import verify_token
+from ..core import setup_logger, verify_token
 from ..models.users import User
 from ..models.chats import Chat
 from ..utils.socket_room_manager import RoomManager
@@ -36,7 +35,8 @@ async def authenticate_user(websocket: WebSocket, db: Session) -> User:
         raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
     
     try:
-        user_id = verify_token(auth_data.token.split(' ')[1])
+        # user_id = verify_token(auth_data.token.split(' ')[1])
+        user_id = verify_token(auth_data.token)
         user = user_service.get_user_by_id(user_id, db=db)
         return user
     except HTTPException as e:
