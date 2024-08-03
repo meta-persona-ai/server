@@ -2,15 +2,18 @@ import textwrap
 
 class SwaggerConfig:
     def __init__(self):
-        self.title = "Persona AI"
+        self.title = "eMoGi"
         self.version = "0.0.1"
         self.description = textwrap.dedent("""\
-            #### 페르소나 AI
-
             기능 목록:
 
-            * **auth** (_not implemented_).
-            * **user** (_not implemented_).
+            * **Auth** (_completely implemented_).
+            * **User** (_completely implemented_).
+            * **Characters** (_not implemented_).
+            * **Default image** (_completely implemented_).
+            * **Relationship** (_completely implemented_).
+            * **Chat** (_completely implemented_).
+            * **Chat log** (_completely implemented_).
         """)
         self.license_info = {
             "name": "Apache 2.0",
@@ -26,8 +29,24 @@ class SwaggerConfig:
                 "description": "유저 관련 API입니다."
             },
             {
+                "name": "Characters",
+                "description": "캐릭터 관련 API입니다."
+            },
+            {
+                "name": "Default image",
+                "description": "기본 캐릭터 이미지 관련 API입니다."
+            },
+            {
+                "name": "Relationship",
+                "description": "캐릭터와 유저 사이의 관계에 관한 API입니다."
+            },
+            {
                 "name": "Chat",
                 "description": "채팅방 관련 API입니다."
+            },
+            {
+                "name": "Chat log",
+                "description": "채팅 기록에 관한 API입니다."
             },
         ]
 

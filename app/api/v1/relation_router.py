@@ -42,10 +42,3 @@ async def delete_relationship(relationship_id: int, db: Session = Depends(get_db
     relationship = RelationshipService.delete_relationship(relationship_id, db)
     return {"message": "Relationship deleted successfully"} if relationship else {"message": "Relationship deletion failed"}
 
-# @router.delete("/{chat_id}",
-#                description="관계를 삭제하는 API입니다.",
-#                response_model=MessageResponse
-#                )
-# async def delete_chat(chat_id: int, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
-#     success = chat_service.delete_chat_by_id(chat_id, user_id, db)
-#     return {"message": "Chat deleted successfully"} if success else {"message": "Chat deletion failed"}
