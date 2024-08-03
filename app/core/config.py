@@ -13,9 +13,6 @@ class APIKeyValidationError(Exception):
     pass
 
 def validate_google_api_key(google_api_key):
-    print("=======================================")
-    print(google_api_key)
-    print("=======================================")
     result = requests.post(
         url= "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
         data=b'{"contents":[{"parts":[{"text":""}]}]}',
@@ -31,7 +28,6 @@ def validate_google_api_key(google_api_key):
 
 try:
     settings = Settings()
-    print(settings.SEND_WEBHOOK_MESSAGE)
     logger.info("📌 Settings loaded successfully.")
     validate_google_api_key(settings.google_api_key)
     logger.info("📌 Google API key validation passed.")
