@@ -18,8 +18,8 @@ relationships:
 
 characters:
   - name: "init character"
-    gender: "male"
-    profile: "init profile"
+    gender: "female"
+    profile: "https://emogi.s3.ap-northeast-2.amazonaws.com/9bc97aa4-c97e-422e-8ab0-0208013b0b81.png"
     personality: "init personality"
     details: "init details"
     user_email: "test@example.com"
@@ -27,8 +27,8 @@ characters:
     - relationship_id: 1
     - relationship_id: 2
   - name: "init character2"
-    gender: "female"
-    profile: "init profile"
+    gender: "male"
+    profile: "https://emogi.s3.ap-northeast-2.amazonaws.com/bdcf5ec1-eee7-426c-95be-161bc646925d.png"
     personality: "init personality"
     details: "init details"
     user_email: "test@example.com"
