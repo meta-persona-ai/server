@@ -8,7 +8,7 @@ from ...services.default_image_service import DefaultImageService
 
 router = APIRouter(
     prefix="/api/v1/default-images",
-    tags=["default image"]
+    tags=["Default image"]
 )
 
 @router.post("/",
