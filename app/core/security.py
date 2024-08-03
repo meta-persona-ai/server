@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 
-from ..core.env_config import settings
+from . import settings
 
 SECRET_KEY = settings.jwt_secret
 ALGORITHM = settings.jwt_algorithm

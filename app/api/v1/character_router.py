@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.core.security import get_current_user
+from app.core import get_current_user
 from app.schemas.request.character_request_schema import CharacterCreate, CharacterUpdate
 from app.schemas.response.character_response_schema import CharacterResponse, CharacterCreateResponse, MessageResponse
 

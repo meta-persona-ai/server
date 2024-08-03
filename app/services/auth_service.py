@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from ..core.logger_config import setup_logger
-from ..core.security import create_access_token, verify_token
+from ..core import setup_logger, create_access_token, verify_token
 from ..utils import google_api
 from ..crud import auth_crud
 from ..services import user_service

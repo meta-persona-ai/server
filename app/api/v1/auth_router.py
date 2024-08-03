@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ...db.database import get_db
-from ...core.logger_config import setup_logger
-from ...core.security import get_current_user
+from ...core import setup_logger, get_current_user
 from ...schemas.request import auth_request_schema
 from ...schemas.response.auth_response_schema import ResponseDecodeToken, LoginResponse
 from ...services import auth_service

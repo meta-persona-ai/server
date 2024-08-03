@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import asyncio
 import json
 
-from app.core.logger_config import setup_logger
+from app.core import setup_logger
 from app.models.users import User
 from app.utils.socket_connection_manager import ConnectionManager
 from app.utils.socket_room_manager import RoomManager
