@@ -2,8 +2,7 @@ import jwt
 from jwt import PyJWKClient
 from jose.exceptions import JWTError
 
-from ..core.env_config import settings
-from ..core.logger_config import setup_logger
+from ..core import settings, setup_logger
 from ..schemas.request.user_request_schema import UserCreate
 
 

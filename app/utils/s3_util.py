@@ -4,8 +4,7 @@ from botocore.exceptions import NoCredentialsError
 import os
 import uuid
 
-from ..core.logger_config import setup_logger
-from ..core.env_config import settings
+from ..core import settings, setup_logger
 
 logger = setup_logger()
 

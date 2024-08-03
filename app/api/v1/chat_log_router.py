@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.core.security import get_current_user
+from app.core import get_current_user
 from app.services import chat_log_service
 from app.schemas.response.chat_log_resposne_schema import ChatLogResponse, MessageResponse
 
