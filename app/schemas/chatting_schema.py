@@ -11,6 +11,8 @@ class UserMessage(BaseModel):
 
 class SystemMessage(BaseModel):
     type: str
+    characterName: str
+    responseId: int
     message: str
 
 class CharacterMessage(BaseModel):

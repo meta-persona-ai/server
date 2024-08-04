@@ -44,14 +44,14 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            # Stop and remove the existing container
-            podman stop ${{ env.CONTAINER_NAME }} || true
-            podman rm ${{ env.CONTAINER_NAME }} || true
-
             podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
 
             # Pull the latest image
             podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+            # Stop and remove the existing container
+            podman stop ${{ env.CONTAINER_NAME }} || true
+            podman rm ${{ env.CONTAINER_NAME }} || true
 
             # Run the new container
             podman run -d --name ${{ env.CONTAINER_NAME }} -p 7070:8000 -v /root/security/persona-app/.env:/app/.env -e TZ=Asia/Seoul docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

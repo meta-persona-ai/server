@@ -21,7 +21,12 @@ class ConnectionManager:
             await connection.send_text(message)
     
     async def broadcast_system_message(self, message: str):
-        system_message = SystemMessage(type="system", message=message).model_dump_json()
+        system_message = SystemMessage(
+            type="system", 
+            message=message,
+            characterName="no chatactor",
+            responseId=0
+            ).model_dump_json()
         for connection in self.active_connections:
             await connection.send_text(system_message)
 
