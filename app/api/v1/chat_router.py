@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.core import get_current_user
 from app.schemas.request.chat_request_schema import ChatCreate
-from app.schemas.response.chat_response_schema import ChatResponse, MessageResponse
+from app.schemas.response.chat_response_schema import ChatResponse, MessageResponse, ChatCreateResponse
 from app.services import chat_service, character_service
 
 router = APIRouter(
@@ -14,15 +14,18 @@ router = APIRouter(
 
 @router.post("/",
             description="새 채팅방을 생성하는 API입니다.",
-            response_model=MessageResponse
+            response_model=ChatCreateResponse
             )
 async def create_chat(character_id: int, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
     character = character_service.get_characters_by_id(user_id, db)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
     chat = ChatCreate(user_id=user_id, character_id=character_id)
-    success = chat_service.create_chat(chat, db)
-    return {"message": "Chat created successfully"} if success else {"message": "Chat creation failed"}
+    chat = chat_service.create_chat(chat, db)
+    return {
+        "message": "Chat created successfully",
+        "chat_id": chat.chat_id
+        }
 
 @router.get("/me/",
             description="인증된 사용자의 모든 채팅방를 조회하는 API입니다.",
