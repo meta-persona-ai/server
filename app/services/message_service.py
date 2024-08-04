@@ -72,7 +72,7 @@ async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs:
                 "type": "character",
                 "characterName": character_name,
                 "responseId": response_id,
-                "streamContent": char
+                "content": char
             }
         response_data = CharacterMessage(**response).model_dump_json()
         await room.broadcast(response_data)

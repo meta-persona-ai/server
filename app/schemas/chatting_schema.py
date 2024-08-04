@@ -13,10 +13,10 @@ class SystemMessage(BaseModel):
     type: str
     characterName: str
     responseId: int
-    message: str
+    content: str
 
 class CharacterMessage(BaseModel):
     type: str
     characterName: str
     responseId: int
-    streamContent: str
+    content: str
