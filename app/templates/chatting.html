@@ -53,14 +53,14 @@
                 var data = JSON.parse(event.data);
                 console.log(data);
 
-                if (data.streamContent) {
-                    if (!currentMessages[data.response_id]) {
+                if (data.content) {
+                    if (!currentMessages[data.responseId]) {
                         var message = document.createElement('li');
-                        message.id = 'message-' + data.response_id;
-                        currentMessages[data.response_id] = message;
+                        message.id = 'message-' + data.responseId;
+                        currentMessages[data.responseId] = message;
                         messages.appendChild(message);
                     }
-                    currentMessages[data.response_id].textContent += data.streamContent;
+                    currentMessages[data.responseId].textContent += data.content;
                 } else if (data.message) {
                     var infoMessage = document.createElement('li');
                     infoMessage.textContent = data.message;
