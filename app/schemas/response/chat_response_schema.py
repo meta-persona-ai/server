@@ -17,5 +17,9 @@ class ChatResponse(CamelModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class ChatCreateResponse(CamelModel):
+    message: str
+    chat_id: int
+
 class MessageResponse(CamelModel):
     message: str
