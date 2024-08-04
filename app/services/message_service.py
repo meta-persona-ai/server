@@ -26,16 +26,16 @@ async def echo_message(
         db: Session
         ):
 
-    await insert_message(chat, user_message.type, user_message.message, db)
+    await insert_message(chat, user_message.type, user_message.content, db)
 
-    user_log_message = create_log_message("User", chat.chat_id, chat.user.user_name, user_message.message)
+    user_log_message = create_log_message("User", chat.chat_id, chat.user.user_name, user_message.content)
     logger.info(user_log_message)
 
     # output = await generate_bot_response(room, gemini, user_message.message, chat.character.character_name, response_id)
     output = await exception_handler(
-        generate_bot_response, room, gemini, user_message.message, chat.character.character_name, response_id
+        generate_bot_response, room, gemini, user_message.content, chat.character.character_name, response_id
     )
-    gemini.add_history(user_message.message, output)
+    gemini.add_history(user_message.content, output)
     await insert_message(chat, "character", output, db)
     
     user_log_message = create_log_message("Bot", chat.chat_id, chat.user.user_name, output)
@@ -70,9 +70,9 @@ async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs:
         output += char
         response = {
                 "type": "character",
-                "character_name": character_name,
-                "response_id": response_id,
-                "character": char
+                "characterName": character_name,
+                "responseId": response_id,
+                "streamContent": char
             }
         response_data = CharacterMessage(**response).model_dump_json()
         await room.broadcast(response_data)

@@ -7,7 +7,7 @@ class AuthMessage(BaseModel):
 
 class UserMessage(BaseModel):
     type: str
-    message: str
+    content: str
 
 class SystemMessage(BaseModel):
     type: str
@@ -15,6 +15,6 @@ class SystemMessage(BaseModel):
 
 class CharacterMessage(BaseModel):
     type: str
-    character_name: str
-    response_id: int
-    character: str
+    characterName: str
+    responseId: int
+    streamContent: str

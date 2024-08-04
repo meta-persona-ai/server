@@ -53,14 +53,14 @@
                 var data = JSON.parse(event.data);
                 console.log(data);
 
-                if (data.character) {
+                if (data.streamContent) {
                     if (!currentMessages[data.response_id]) {
                         var message = document.createElement('li');
                         message.id = 'message-' + data.response_id;
                         currentMessages[data.response_id] = message;
                         messages.appendChild(message);
                     }
-                    currentMessages[data.response_id].textContent += data.character;
+                    currentMessages[data.response_id].textContent += data.streamContent;
                 } else if (data.message) {
                     var infoMessage = document.createElement('li');
                     infoMessage.textContent = data.message;
@@ -89,7 +89,7 @@
             var input = document.getElementById("messageText");
             var messageData = {
                 type: "user",
-                message: input.value
+                content: input.value
             };
             ws.send(JSON.stringify(messageData));
             input.value = '';
