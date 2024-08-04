@@ -28,19 +28,23 @@ async def authenticate_user(websocket: WebSocket, db: Session) -> User:
     Raises:
         HTTPException: 인증 실패 시 예외 발생.
     """
-    auth_message = await websocket.receive_text()
-    auth_data = AuthMessage(**json.loads(auth_message))
-
-    if auth_data.type != "auth" or not auth_data.token:
-        raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
-    
     try:
-        # user_id = verify_token(auth_data.token.split(' ')[1])
+        auth_message = await websocket.receive_text()
+        auth_data = AuthMessage(**json.loads(auth_message))
+
+        if auth_data.type != "auth" or not auth_data.token:
+            raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
+        
         user_id = verify_token(auth_data.token)
         user = user_service.get_user_by_id(user_id, db=db)
         return user
+
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=1008, detail="Authentication failed: Invalid JSON format")
     except HTTPException as e:
         raise HTTPException(status_code=1008, detail=f"Token validation failed: {e.detail}")
+    except Exception as e:
+        raise HTTPException(status_code=1008, detail=f"Authentication failed: {str(e)}")
 
 async def validate_chat_room(chat_id: int, user: User, db: Session) -> Chat:
     """

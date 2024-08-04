@@ -24,8 +24,8 @@ class ChatLogResponse(CamelModel):
     contents: str
     log_create_at: datetime
 
-    user: User
-    character: Character
+    # user: User
+    # character: Character
 
 class MessageResponse(CamelModel):
     message: str
