@@ -9,7 +9,7 @@ from ..utils.socket_room_manager import RoomManager
 from ..utils.socket_connection_manager import ConnectionManager
 from ..schemas.request.chat_log_request_schema import ChatLogCreate
 from ..schemas.chatting_schema import AuthMessage
-from ..services import chat_service, user_service, chat_log_service
+from ..services import ChatService, UserService, ChatLogService
 
 
 logger = setup_logger()
@@ -36,7 +36,7 @@ async def authenticate_user(websocket: WebSocket, db: Session) -> User:
             raise HTTPException(status_code=1008, detail="Authentication failed: Invalid authentication type or missing token")
         
         user_id = verify_token(auth_data.token)
-        user = user_service.get_user_by_id(user_id, db=db)
+        user = UserService.get_user_by_id(user_id, db=db)
         return user
 
     except json.JSONDecodeError:
@@ -61,7 +61,7 @@ async def validate_chat_room(chat_id: int, user: User, db: Session) -> Chat:
     Raises:
         HTTPException: 사용자가 채팅 방에 참여할 수 없는 경우 예외 발생.
     """
-    chat = chat_service.get_chat_by_chat_id_and_user_id(chat_id, user.user_id, db)
+    chat = ChatService.get_chat_by_chat_id_and_user_id(chat_id, user.user_id, db)
     if not chat:
         raise HTTPException(status_code=1008, detail=f"Chat room validation failed: User ({user.user_name}) {user.user_name} is not authorized to join room {chat_id}")
     return chat
@@ -135,4 +135,4 @@ async def insert_message(chat: Chat, role: str, contents: str, db: Session):
         role=role,
         contents=contents
     )
-    chat_log_service.create_chat_log(chat_log, db)
+    ChatLogService.create_chat_log(chat_log, db)
