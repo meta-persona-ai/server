@@ -2,14 +2,9 @@ from sqlalchemy import Column, Integer, String, BigInteger, Enum, Text, ForeignK
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
-import enum
 
 from ..db.database import Base
-
-class CharacterGenderEnum(enum.Enum):
-    male = 'male'
-    female = 'female'
-    other = 'other'
+from .enums import CharacterGenderEnum
 
 class Character(Base):
     __tablename__ = "characters"
@@ -20,6 +15,8 @@ class Character(Base):
     character_gender = Column(Enum(CharacterGenderEnum), nullable=True)
     character_personality = Column(String(255), nullable=True)
     character_details = Column(Text, nullable=True)
+    character_description = Column(String(255), nullable=True)
+    character_greeting = Column(Text, nullable=True)
 
     character_created_at = Column(DATETIME(fsp=3), default=datetime.now, nullable=False)
     character_updated_at = Column(DATETIME(fsp=3), default=datetime.now, onupdate=datetime.now, nullable=False)

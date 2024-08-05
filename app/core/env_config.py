@@ -1,9 +1,6 @@
 from pydantic_settings import BaseSettings
-from pydantic import ConfigDict, ValidationError
+from pydantic import ConfigDict
 from dotenv import load_dotenv
-import requests
-import json
-import sys
 
 from .logger_config import setup_logger
 
@@ -30,6 +27,7 @@ class Settings(BaseSettings):
 
     # DATABASE
     database_url: str
+    drop_table: bool
 
     # GEMINI
     google_api_key: str
