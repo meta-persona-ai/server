@@ -20,8 +20,7 @@ class ChatLogService:
             raise HTTPException(status_code=404, detail="Chats not found")
 
         chat_logs = chat_log_crud.get_chat_logs_by_user_id(chat_id, user_id, db)
-        if not chat_logs:
-            raise HTTPException(status_code=404, detail="Chat logs not found")
+
         return chat_logs
 
     # delete
