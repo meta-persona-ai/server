@@ -1,14 +1,14 @@
+from google.api_core.exceptions import InternalServerError, ServiceUnavailable
 from sqlalchemy.orm import Session
 import asyncio
-from google.api_core.exceptions import InternalServerError, ServiceUnavailable
 
-from app.core import setup_logger
-from app.utils.socket_connection_manager import ConnectionManager
-from app.schemas.chatting_schema import CharacterMessage
+from ..core import setup_logger
+from ..models import Chat
+from ..utils.socket_connection_manager import ConnectionManager
+from ..schemas.chatting_schema import CharacterMessage
 
-from app.utils.langchain import Gemini
-from app.utils import const
-from ..models.chats import Chat
+from ..utils.langchain import Gemini
+from ..utils import const
 from ..schemas.chatting_schema import UserMessage
 from ..schemas.bot_schema import UserSchema, CharacterSchema, ChatLogSchema
 

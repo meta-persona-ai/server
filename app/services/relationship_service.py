@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from app.crud import relationship_crud
+
+from ..crud import relationship_crud
 from ..schemas.request.relationship_request_schema import RelationshipCreate, RelationshipUpdate
 
 class RelationshipService:

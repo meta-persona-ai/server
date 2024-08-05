@@ -2,6 +2,16 @@ from fastapi_camelcase import CamelModel
 from pydantic import ConfigDict
 from datetime import datetime
 
+class User(CamelModel):
+    user_id: int
+    user_name: str
+    user_profile: str
+
+class Character(CamelModel):
+    character_id: int
+    character_name: str
+    character_profile: str
+
 class ChatLogs(CamelModel):
     log_id: int
     contents: str
@@ -15,7 +25,13 @@ class ChatResponse(CamelModel):
 
     chat_logs: list[ChatLogs]
 
-    model_config = ConfigDict(from_attributes=True)
+    user: User
+    character: Character
+
+    model_config = ConfigDict(
+        from_attributes=True, 
+        json_encoders={datetime: lambda v: v.isoformat()}
+    )
 
 class ChatCreateResponse(CamelModel):
     message: str
