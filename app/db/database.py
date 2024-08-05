@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
-from dotenv import load_dotenv
 
-from ..core import settings
+from ..core import settings, setup_logger
 
-load_dotenv()
+logger = setup_logger()
 
 DATABASE_URL = settings.database_url
+DROP_TABLE = settings.drop_table
+
 db_name = DATABASE_URL.split('/')[-1].split('?')[0]
 
 base_db_url = DATABASE_URL.rsplit('/', 1)[0]
@@ -27,7 +28,9 @@ def create_schema():
         connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {db_name}"))
 
 def drop_tables():
-    Base.metadata.drop_all(bind=engine)
+    if DROP_TABLE:
+        logger.info("📌 Dropping all tables in the database.")
+        Base.metadata.drop_all(bind=engine)
 
 def create_tables():
     Base.metadata.create_all(bind=engine)

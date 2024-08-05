@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from app.core import settings
-from app.db import database
-from app.db.initial_data import DatabaseInitializer
-from app.utils.webhook import server_start_message, server_stop_message
+from ..db import database, DatabaseInitializer
+from ..utils.webhook import server_start_message, server_stop_message
 
 
 @asynccontextmanager
