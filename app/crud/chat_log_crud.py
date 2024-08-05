@@ -24,7 +24,7 @@ def get_chat_logs_by_user_id(chat_id: int, user_id: int, db: Session) -> list[Ch
     return db.query(ChatLog).filter(
         ChatLog.chat_id == chat_id, 
         ChatLog.user_id == user_id, 
-        ).order_by(ChatLog.log_create_at.desc()).all()
+        ).order_by(ChatLog.log_create_at.asc()).all()
 
 # delete
 def delete_chat_log_by_id(log_id: int, user_id: int, db: Session) -> bool:
