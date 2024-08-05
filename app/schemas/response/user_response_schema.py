@@ -2,7 +2,7 @@ from fastapi_camelcase import CamelModel
 from pydantic import ConfigDict
 from datetime import datetime
 
-from app.models.users import Gender
+from app.models import UserGenderEnum
 
 
 class UserResponse(CamelModel):
@@ -10,7 +10,7 @@ class UserResponse(CamelModel):
     user_email: str
     user_name: str
     user_profile: str | None = None
-    user_gender: Gender | None = None
+    user_gender: UserGenderEnum | None = None
     user_birthdate: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)

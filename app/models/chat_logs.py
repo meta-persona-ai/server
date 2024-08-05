@@ -2,14 +2,9 @@ from sqlalchemy import Column, Integer, Enum, Text, ForeignKey, BigInteger, Sequ
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import relationship
-from enum import Enum as PyEnum
 
-from ..db.database import Base
-
-
-class ChatTypeEnum(PyEnum):
-    user = 'user'
-    character = 'character'
+from ..db import Base
+from .enums import ChatTypeEnum
 
 class ChatLog(Base):
     __tablename__ = "chat_logs"
