@@ -20,6 +20,8 @@ class Character(Base):
     character_gender = Column(Enum(CharacterGenderEnum), nullable=True)
     character_personality = Column(String(255), nullable=True)
     character_details = Column(Text, nullable=True)
+    character_description = Column(String(255), nullable=True)
+    character_greeting = Column(Text, nullable=True)
 
     character_created_at = Column(DATETIME(fsp=3), default=datetime.now, nullable=False)
     character_updated_at = Column(DATETIME(fsp=3), default=datetime.now, onupdate=datetime.now, nullable=False)
