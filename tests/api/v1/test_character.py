@@ -23,6 +23,8 @@ def test_create_character(client: TestClient):
         "characterGender": "male",
         "characterPersonality": "Test personality",
         "characterDetails": "Test details",
+        "characterDescription": "Test description",
+        "characterGreeting": "Test greeting",
         "characterIsPublic": True,
         "relationships": [1,2]
     }

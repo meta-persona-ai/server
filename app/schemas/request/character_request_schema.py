@@ -12,6 +12,8 @@ class CharacterCreate(CamelModel):
     character_gender: CharacterGenderEnum | None = None
     character_personality: str | None = None
     character_details: str | None = None
+    character_description: str | None = None
+    character_greeting: str | None = None
     character_is_public: bool
     relationships: list[int] = []
 
@@ -21,4 +23,6 @@ class CharacterUpdate(CamelModel):
     character_gender: CharacterGenderEnum | None = None
     character_personality: str | None = None
     character_details: str | None = None
+    character_description: str | None = None
+    character_greeting: str | None = None
     character_is_public: bool | None = None
