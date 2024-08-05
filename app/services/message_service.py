@@ -66,18 +66,24 @@ async def exception_handler(func, *args, max_retries: int = const.MAX_RETRIES, r
 
 async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs: str, character_name: str, response_id: int):
     output = ""
-    async for char in gemini.astream_yield(inputs):
-        output += char
-        response = {
-                "type": "character",
-                "characterName": character_name,
-                "responseId": response_id,
-                "content": char
-            }
-        response_data = CharacterMessage(**response).model_dump_json()
-        await room.broadcast(response_data)
+    async for content in gemini.astream_yield(inputs):
+        output += content
+        await send_socket_response(room, content, character_name, response_id)
+    
+    await send_socket_response(room, "[EOS]", character_name, response_id)
 
     return output
+
+async def send_socket_response(room: ConnectionManager, content: str, character_name: str, response_id: int):
+    response = {
+            "type": "character",
+            "characterName": character_name,
+            "responseId": response_id,
+            "content": ""
+        }
+    response['content'] = content
+    response_data = CharacterMessage(**response).model_dump_json()
+    await room.broadcast(response_data)
 
 def data_converter(chat: Chat) -> tuple[dict[str, object], dict[str, object], list[dict[str, str]]]:
     user = UserSchema.model_validate(chat.user)
