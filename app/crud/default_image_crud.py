@@ -7,7 +7,9 @@ from ..schemas.request.default_image_request_schema import DefaultImageCreate, D
 def create_image(image: DefaultImageCreate, db: Session):
     db_default_image = DefaultImages(
         image_name = image.image_name,
-        image_url = image.image_url
+        image_url = image.image_url,
+        image_gender = image.image_gender,
+        image_age_group = image.image_age_group
     )
     db.add(db_default_image)
     db.commit()

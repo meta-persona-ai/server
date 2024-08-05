@@ -113,7 +113,9 @@ class DatabaseInitializer:
         for default_image in default_images:
             init_image = default_image_request_schema.DefaultImageCreate(
                 image_name=default_image["image_name"],
-                image_url=default_image["image_url"]
+                image_url=default_image["image_url"],
+                image_gender = default_image["image_gender"],
+                image_age_group = default_image["image_age_group"]
             )
 
             existing_relationship = default_image_crud.get_default_images_by_name(default_image['image_name'], db)

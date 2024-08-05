@@ -1,7 +1,7 @@
 from fastapi_camelcase import CamelModel
 from datetime import datetime
 
-from app.models.users import Gender
+from app.models import UserGenderEnum
 
 class UserCreate(CamelModel):
     user_id: int | None = None
@@ -16,5 +16,5 @@ class UserUpdate(CamelModel):
     # user_email: str | None = None
     user_name: str | None = None
     user_profile: str | None = None
-    user_gender: Gender | None = None
+    user_gender: UserGenderEnum | None = None
     user_birthdate: datetime | None = None

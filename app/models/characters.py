@@ -2,14 +2,9 @@ from sqlalchemy import Column, Integer, String, BigInteger, Enum, Text, ForeignK
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.dialects.mysql import DATETIME
-import enum
 
 from ..db.database import Base
-
-class CharacterGenderEnum(enum.Enum):
-    male = 'male'
-    female = 'female'
-    other = 'other'
+from .enums import CharacterGenderEnum
 
 class Character(Base):
     __tablename__ = "characters"

@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.mysql import DATETIME
 
-from ..db.database import Base
+from ..db import Base
 
 class Chat(Base):
     __tablename__ = "chats"
