@@ -4,16 +4,15 @@ from sqlalchemy.orm import Session
 import asyncio
 import json
 
-from app.core import setup_logger
-from app.models.users import User
-from app.utils.socket_connection_manager import ConnectionManager
-from app.utils.socket_room_manager import RoomManager
+from ..core import setup_logger
+from ..models import User, Chat
+from ..utils.socket_connection_manager import ConnectionManager
+from ..utils.socket_room_manager import RoomManager
 from ..schemas.chatting_schema import UserMessage
 from ..schemas.schemas import CharacterSchema
-from ..models.chats import Chat
 from ..schemas.bot_schema import UserSchema, CharacterSchema, ChatLogSchema
 from ..services.message_service import echo_message
-from app.utils.langchain import Gemini
+from ..utils.langchain import Gemini
 
 from ..utils.socket_handler import authenticate_user, validate_chat_room, handle_disconnect, handle_exception
 
