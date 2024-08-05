@@ -5,7 +5,7 @@ from ...db.database import get_db
 from ...core import setup_logger, get_current_user
 from ...schemas.request import auth_request_schema
 from ...schemas.response.auth_response_schema import ResponseDecodeToken, LoginResponse
-from ...services import auth_service
+from ...services import AuthService
 
 logger = setup_logger()
 
@@ -19,7 +19,7 @@ router = APIRouter(
              response_model=LoginResponse
              )
 async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Session = Depends(get_db)):
-    response = auth_service.auth_google_id_token(data.id_token, db)
+    response = AuthService.auth_google_id_token(data.id_token, db)
     logger.info(f"📌 return access token - {response['access_token']}")
 
     return response
@@ -29,7 +29,7 @@ async def auth_google_token(data: auth_request_schema.LoginGoogleIdToken, db: Se
              response_model=LoginResponse
              )
 async def get_test_access_token(db: Session = Depends(get_db)):
-    response = auth_service.make_test_access_token(db)
+    response = AuthService.make_test_access_token(db)
     return response
 
 @router.get("/token",
