@@ -1,5 +1,5 @@
 from fastapi_camelcase import CamelModel
-from pydantic import ConfigDict
+from pydantic import field_serializer
 from datetime import datetime
 
 class User(CamelModel):
@@ -28,10 +28,9 @@ class ChatResponse(CamelModel):
     user: User
     character: Character
 
-    model_config = ConfigDict(
-        from_attributes=True, 
-        json_encoders={datetime: lambda v: v.isoformat()}
-    )
+    @field_serializer("chat_create_at", "last_message_at")
+    def serialize_datetime(self, v: datetime):
+        return v.isoformat()
 
 class ChatCreateResponse(CamelModel):
     message: str
