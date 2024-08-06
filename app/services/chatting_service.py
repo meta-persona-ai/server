@@ -31,31 +31,36 @@ async def chatting(websocket: WebSocket, chat_id: int, db: Session):
     room = room_manager.get_room(chat_id)
     await room.connect(websocket)
     logger.info(f"📌 WebSocket connection established with room: {chat_id}")
-
-    # Validate Chatting
+    
     try:
+        # Validate Chatting
         user: User = await authenticate_user(websocket, db)
         chat = await validate_chat_room(chat_id, user, db)
+        
+        # Chatting Start
+        logger.info(f"📌 User {user.user_name}({user.user_id}) joined the room {chat_id}")
+        await room.broadcast_system_message(f"A new client has joined {chat_id}.")
+
+        # Chatting Handler
+        await handle_messages(websocket, room, chat, db)
+
     except HTTPException as e:
         logger.info(f"❌ {e.detail}")
         await websocket.close(code=1008, reason=e.detail)
-        return
-    
-    # Chatting Start
-    logger.info(f"📌 User {user.user_name}({user.user_id}) joined the room {chat_id}")
-    await room.broadcast_system_message(f"A new client has joined {chat_id}.")
-    
-    try:
-        # Chatting Handler
-        await handle_messages(websocket, room, chat, db)
+
+    except RuntimeError:
+        logger.warning(f"Failed to send message to connection: {room.connections}")
+        await websocket.close(code=1008, reason="Failed to broadcast system message.")
+
     except WebSocketDisconnect:
         await handle_disconnect(websocket, room_manager, room, chat_id, user)
+
     except Exception as e:
         await handle_exception(websocket, e)
 
 async def handle_messages(websocket: WebSocket, room: ConnectionManager, chat: Chat, db: Session):
     """
-    WebSocket을 통해 수신된 메시지를 처리하고 응답을 생성하는 함수
+    WebSocket을 통해 수신된 메시지를 처리하고 응답을 생성하는 함수  
 
     Args:
         websocket (WebSocket): WebSocket 객체.
