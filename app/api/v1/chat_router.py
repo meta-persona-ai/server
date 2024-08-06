@@ -17,7 +17,7 @@ router = APIRouter(
             response_model=ChatCreateResponse
             )
 async def create_chat(character_id: int, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
-    character = CharacterService.get_characters_by_id(user_id, db)
+    character = CharacterService.get_characters_by_id(character_id, db)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
     chat = ChatCreate(user_id=user_id, character_id=character_id)
