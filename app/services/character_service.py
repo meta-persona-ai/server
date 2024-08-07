@@ -18,14 +18,14 @@ class CharacterService:
         return character_crud.get_all_characters(db)
 
     @staticmethod
-    def get_character(character_id: int, user_id: int, db: Session) -> Character:
+    def get_character_by_character_id(character_id: int, user_id: int, db: Session) -> Character:
         character = character_crud.get_character(character_id, user_id, db)
         if not character:
-            raise HTTPException(status_code=404, detail="Characters not found")
+            raise HTTPException(status_code=404, detail="Character not found")
         return character
 
     @staticmethod
-    def get_characters_by_id(user_id: int, db: Session) -> list[Character]:
+    def get_characters_by_user_id(user_id: int, db: Session) -> list[Character]:
         return character_crud.get_characters_by_user_id(user_id, db)
 
     @staticmethod
