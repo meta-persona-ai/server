@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from ...db.database import get_db
 from ...schemas.response.default_image_response_schema import DefaultImageResposne, MessageResponse
 from ...services.default_image_service import DefaultImageService
+from ...schemas.request.default_image_request_schema import DefaultImageCreate
 
 
 router = APIRouter(
@@ -17,12 +18,19 @@ router = APIRouter(
             )
 async def create_default_image(
     name: str = Form(...), 
+    gender: str = Form(...), 
+    age_group: str = Form(...), 
     image: UploadFile = File(...), 
     db: Session = Depends(get_db)
 ):  
-    await DefaultImageService.create_image(name, image, db)
+    image_data = DefaultImageCreate(
+        image_name=name, 
+        image_gender=gender,
+        image_age_group=age_group
+        )
+    await DefaultImageService.create_image(image_data, image, db)
 
-    return {"message": "Chat created successfully"} if True else {"message": "Chat creation failed"}
+    return {"message": "Image created successfully"} if True else {"message": "Image creation failed"}
 
 @router.get("/",
             description="기본 이미지를 불러오는 API입니다.",

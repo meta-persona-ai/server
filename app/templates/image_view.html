@@ -36,8 +36,19 @@
             <label for="imageName">Image Name:</label>
             <input type="text" id="imageName" name="imageName" required>
             <br>
-            <label for="imageDescription">Image Description:</label>
-            <input type="text" id="imageDescription" name="imageDescription" required>
+            <label for="imageGender">Gender:</label>
+            <select id="imageGender" name="imageGender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+            <br>
+            <label for="imageAgeGroup">Age Group:</label>
+            <select id="imageAgeGroup" name="imageAgeGroup" required>
+                <option value="youth">Youth</option>
+                <option value="middle_age">Middle Age</option>
+                <option value="elderly">Elderly</option>
+            </select>
             <br>
             <label for="imageFile">Select Image:</label>
             <input type="file" id="imageFile" name="imageFile" accept="image/*" required>
@@ -45,8 +56,6 @@
             <button type="submit">Upload</button>
         </form>
     </div>
-
-
 
     <div class="image-container" id="imageContainer">
         <!-- Images will be loaded here -->
@@ -58,7 +67,7 @@
             const apiUrl = '/api/v1/default-images/';
 
             // Fetch the image data from the API
-            fetchImages(apiUrl)
+            fetchImages(apiUrl);
 
             // Handle form submission
             const uploadForm = document.getElementById('uploadForm');
@@ -67,7 +76,8 @@
 
                 const formData = new FormData();
                 formData.append('name', document.getElementById('imageName').value);
-                formData.append('description', document.getElementById('imageDescription').value);
+                formData.append('gender', document.getElementById('imageGender').value);
+                formData.append('age_group', document.getElementById('imageAgeGroup').value);
                 formData.append('image', document.getElementById('imageFile').files[0]);
 
                 fetch(apiUrl, {
@@ -77,8 +87,8 @@
                 .then(response => response.json())
                 .then(data => {
                     alert(data.message);
-                    if (data.message === '이미지가 성공적으로 생성되었습니다') {
-                        fetchImages();
+                    if (data.message === 'Image created successfully') {
+                        location.reload();
                     }
                 })
                 .catch(error => {
@@ -92,6 +102,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const imageContainer = document.getElementById('imageContainer');
+                    imageContainer.innerHTML = '';
                     data.forEach(image => {
                         const imageItem = document.createElement('div');
                         imageItem.className = 'image-item';
