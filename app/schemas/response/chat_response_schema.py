@@ -1,5 +1,5 @@
 from fastapi_camelcase import CamelModel
-from pydantic import field_serializer
+from pydantic import field_serializer   
 from datetime import datetime
 
 class User(CamelModel):

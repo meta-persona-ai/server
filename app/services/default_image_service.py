@@ -7,10 +7,11 @@ from ..utils.s3_util import upload_to_s3
 
 class DefaultImageService:
     @staticmethod    
-    async def create_image(image_name: str, image_file: UploadFile, db: Session):
+    async def create_image(image_data: DefaultImageCreate, image_file: UploadFile, db: Session):
         image_url = await upload_to_s3(image_file)
-        image = DefaultImageCreate(image_name=image_name, image_url=image_url)
-        return default_image_crud.create_image(image, db)
+        image_data.image_url = image_url
+        # image = DefaultImageCreate(image_name=image_name, image_url=image_url)
+        return default_image_crud.create_image(image_data, db)
 
     @staticmethod
     def get_default_images(db: Session):
