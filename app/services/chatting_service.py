@@ -49,7 +49,7 @@ async def chatting(websocket: WebSocket, chat_id: int, db: Session):
         await websocket.close(code=1008, reason=e.detail)
 
     except RuntimeError:
-        logger.warning(f"Failed to send message to connection: {room.connections}")
+        logger.warning(f"Failed to send message to connection - room: {chat_id}")
         await websocket.close(code=1008, reason="Failed to broadcast system message.")
 
     except WebSocketDisconnect:
