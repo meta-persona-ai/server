@@ -47,7 +47,7 @@ async def get_my_characters(user_id: str = Depends(get_current_user), db: Sessio
             response_model=list[CharacterResponse]
             )
 async def get_characters_by_rank(db: Session = Depends(get_db)):
-    return CharacterService.get_characters_by_rank(5, db)
+    return CharacterService.get_characters_by_rank(7, db)
 
 @router.put("/{character_id}",  
             description="특정 캐릭터 정보를 업데이트하는 API입니다.",
