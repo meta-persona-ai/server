@@ -67,7 +67,7 @@ async def exception_handler(func, *args, max_retries: int = const.MAX_RETRIES, r
 async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs: str, character_name: str, response_id: int):
     output = ""
     async for content in gemini.astream_yield(inputs):
-        if content == "\n":
+        if content == "\\n":
             print("============\\n============")
         output += content
         await send_socket_response(room, content, character_name, response_id)
