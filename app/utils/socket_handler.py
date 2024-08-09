@@ -115,7 +115,7 @@ def create_log_message(message_type: str, chat_id: int, user_name: str, contents
         return f"▶️  User message received: chat_id: {chat_id}, user_name: {user_name}, contents: {contents}"
     
     if message_type == "Bot":
-        return f"▶️  Bot response sent: chat_id: {chat_id}, user_name: {user_name}, response_message: {contents}"
+        return f"▶️  Bot response sent: chat_id: {chat_id}, user_name: {user_name}, response_message: \"{contents}\""
     
     return ""
 
