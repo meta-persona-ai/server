@@ -124,6 +124,6 @@ class Gemini:
         async for token in result:
             # 한글자씩 스트리밍
             for char in token:
-                await asyncio.sleep(0.2)
+                await asyncio.sleep(0.02)
                 # await asyncio.sleep(1)
                 yield char
