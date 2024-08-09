@@ -68,7 +68,7 @@ async def generate_bot_response(room: ConnectionManager, gemini: Gemini, inputs:
     output = ""
     async for content in gemini.astream_yield(inputs):
         if content == "\\n":
-            print("============\\n============")
+            logger.warning("============\\n============")
         output += content
         await send_socket_response(room, content, character_name, response_id)
     
